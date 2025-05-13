@@ -26,7 +26,28 @@
 <body data-mwf-application="MyApplication" class="mwf-loading-app">
 
 <!-- TODO-REPEATED: add new views here -->
-<div class="mwf-view mwf-view-initial" data-mwf-viewcontroller="MyInitialViewController">
+<!--data-mwf-viewcontroller="ListviewViewController" is equal to: class ListviewViewController zu instanzierenmm. constructor und oncreate() methode werde aufgeruft-->
+<div id="myapp-listview " class="mwf-view mwf-view-initial" data-mwf-viewcontroller="ListviewViewController">
+    <header>
+        <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align"></button>
+        <h1 class="mwf-left-align">Medien</h1>
+        <button class="mwf-imgbutton mwf-img-plus mwf-right-align"></button>
+    </header>
+    <main class="mwf-scrollview">
+        <ul class="mwf-listview" data-mwf-listitem-view="myapp-listitem">
+            <li class="mwf-listitem mwf-li-title-subtitle mwf-template" data-mwf-templatename="myapp-listitem">
+                <img class="mwf-left-align" src="https://picsum.photos/100/100"/>
+                <div class="mwf-left-align mwf-li-titleblock">
+                    <h2>lorem</h2>
+                    <h3>dolor sit amet ipsum</h3>
+                </div>
+                <button class="mwf-imgbutton mwf-img-options-vertical mwf-right-align"></button>
+            </li>
+        </ul>
+    </main>
+    <footer>
+        <button class="mwf-imgbutton mwf-img-refresh mwf-right-align"></button>
+    </footer>
 </div>
 
 </body>

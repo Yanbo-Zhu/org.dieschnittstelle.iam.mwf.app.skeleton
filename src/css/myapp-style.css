@@ -1,1 +1,7 @@
 /* TODO: add any application specific styling here */
+
+#myapp-listview main li img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+}
