@@ -26,6 +26,7 @@
 <body data-mwf-application="MyApplication" class="mwf-loading-app">
 
 <!-- TODO-REPEATED: add new views here -->
+<!--in the Beginning, data-mwf-viewcontroller="MyInitialViewController"-->
 <!--data-mwf-viewcontroller="ListviewViewController" is equal to: class ListviewViewController zu instanzierenmm. constructor und oncreate() methode werde aufgeruft-->
 <div id="myapp-listview " class="mwf-view mwf-view-initial" data-mwf-viewcontroller="ListviewViewController">
     <header>
@@ -34,7 +35,10 @@
         <button class="mwf-imgbutton mwf-img-plus mwf-right-align"></button>
     </header>
     <main class="mwf-scrollview">
+        <!-- put data-mwf-listitem-view="myapp-listitem" in <ul>: data-mwf-listitem-view indicate that a listitem-view will be added into this ul element. Each item in this list item is contructed by using the template myapp-listitem-->
+        <!--This template muss not be set within the <ul> element, but it is better to do so, as it is easier to find the template in the code-->
         <ul class="mwf-listview" data-mwf-listitem-view="myapp-listitem">
+            <!--class="mwf-template": this <li>xx</li> is used as template with a self-defined name "myapp-listitem". this name is given through attribute data-mwf-templatename-->
             <li class="mwf-listitem mwf-li-title-subtitle mwf-template" data-mwf-templatename="myapp-listitem">
                 <img class="mwf-left-align" src="https://picsum.photos/100/100"/>
                 <div class="mwf-left-align mwf-li-titleblock">

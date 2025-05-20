@@ -19,6 +19,8 @@ class MyApplication extends mwf.Application {
         // first call the supertype method and pass a callback
         await super.oncreate();
 
+
+
         console.log("MyApplication.oncreate(): initialising local database");
         // initialise the local database
         // TODO-REPEATED: add new entity types to the array of object store names
@@ -26,10 +28,16 @@ class MyApplication extends mwf.Application {
 
         console.log("MyApplication.oncreate(): local database initialised");
 
+
+
+
         //// TODO-REPEATED: if entity manager is used, register entities and crud operations for the entity types
         //this.registerEntity("MyEntity", entities.MyEntity, true);
         //this.registerCRUD("MyEntity", this.CRUDOPS.LOCAL, GenericCRUDImplLocal.newInstance("MyEntity"));
         //this.registerCRUD("MyEntity", this.CRUDOPS.REMOTE, GenericCRUDImplRemote.newInstance("MyEntity"));
+
+
+
 
         // TODO: do any further application specific initialisations here
 

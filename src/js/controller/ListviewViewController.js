@@ -18,7 +18,7 @@ export default class ListviewViewController extends mwf.ViewController {
      */
     async oncreate() {
         // TODO: do databinding, set listeners, initialise the view
-        alert("ListviewViewController.oncreate() has been called");
+        // alert("ListviewViewController.oncreate() has been called");
         console.log("ListviewViewController.oncreate() has been called: root=", this.root);
         console.log("oncreate() items=", this.items);
 
@@ -32,14 +32,14 @@ export default class ListviewViewController extends mwf.ViewController {
     constructor() {
         super();
 
-        console.log("ListviewViewController()");
+        console.log("The constructor of ListviewViewController() was called");
 
-        this.itmes = [
+        this.items = [
             new entities.MediaItem("lirem", "https://picsum.photos/100/100"),
-            new entities.MediaItem("ipsum", "https://picsum.photos/200/100"),
+            new entities.MediaItem("ipsum", "https://picsum.photos/100/100"),
             new entities.MediaItem("olor", "https://picsum.photos/100/200"),
             new entities.MediaItem("sed", "https://picsum.photos/100/100"),
-            new entities.MediaItem("do", "https://picsum.photos/200/100"),
+            new entities.MediaItem("do", "https://picsum.photos/200/200"),
         ];
     }
 
