@@ -5,3 +5,7 @@
     height: 45px;
     object-fit: cover;
 }
+
+#myapp-readview main li img {
+    width: 100%;
+}

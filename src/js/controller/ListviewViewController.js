@@ -31,7 +31,7 @@ export default class ListviewViewController extends mwf.ViewController {
         addNewItemAction.onclick = () => {
 
             // TODO: add always the same item. Create a random generator for the title and src
-            const newItem = new entities.MediaItem("larem dopsum", "https://picsum.photos/350/150");
+            const newItem = new entities.MediaItem("larem dopsum", "https://picsum.photos/300/300");
 
             //alert("adding: " + newItem.addedDateString)
             console.log("adding: ", newItem);
@@ -82,6 +82,9 @@ export default class ListviewViewController extends mwf.ViewController {
      */
     async onReturnFromNextView(nextviewid, returnValue, returnStatus) {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
+
+        console.log("onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
+
     }
 
     /*
@@ -108,7 +111,11 @@ export default class ListviewViewController extends mwf.ViewController {
 
         console.log("ListviewViewController.onListItemSelected() has been called");
         console.log("onListItemSelected() itemobj=", itemobj);
-        alert("onListItemSelected() itemobj selected=" + itemobj.title);
+        //alert("onListItemSelected() itemobj selected=" + itemobj.title);
+
+        this.nextView("myapp-readview", {itemobj});
+
+
     }
 
     /*
@@ -157,4 +164,12 @@ export default class ListviewViewController extends mwf.ViewController {
         //this.crudops.update(item._id, item).then(() => this.updateInListview(item._id, item));
         item.update().then(() => this.updateInListview(item._id, item));
     }
+
+    async onresume() {
+        entities.MediaItem.readAll().then(items => this.initialiseListview(items));
+        super.onresume();
+        //super.resume();
+
+    }
+
 }
