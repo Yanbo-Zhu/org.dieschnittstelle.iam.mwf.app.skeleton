@@ -35,5 +35,13 @@ export class MediaItem extends EntityManager.Entity {
         this.src = src;
         this.contentType = contentType;
     }
+
+    get addedDateString() {
+        if(this.added) {
+            return new Date(this.added).toLocaleDateString();
+        }
+
+        return "(no date)";
+    }
 }
 

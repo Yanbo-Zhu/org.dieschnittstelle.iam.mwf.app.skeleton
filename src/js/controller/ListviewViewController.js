@@ -33,16 +33,23 @@ export default class ListviewViewController extends mwf.ViewController {
             // TODO: add always the same item. Create a random generator for the title and src
             const newItem = new entities.MediaItem("larem dopsum", "https://picsum.photos/350/150");
 
+            //alert("adding: " + newItem.addedDateString)
+            console.log("adding: ", newItem);
             // this.crudops.create(newItem) gibt ein Promise Object zuruck
-            this.crudops.create(newItem).then((createIteam) =>
-                this.addToListview(createIteam));
+            //this.crudops.create(newItem).then((createIteam) =>
+            //    this.addToListview(createIteam));
+
+            newItem.create().then(() => this.addToListview(newItem));
+
 
             //this.addToListview(newItem);
         }
 
 
-        this.crudops.readAll().then(allitems => {
+        entities.MediaItem.readAll().then(allitems => {
             //console.log("ListviewViewController.oncreate(): allitems=", allitems);
+
+            console.log("items: ", allitems); // this.items addDateString (item.added) is undefined, weil die Daten aus der Datenbank nicht typisiert sind. weil items nicht in der Klasse MediaItem sind
             this.initialiseListview(allitems);
         });
 
@@ -132,11 +139,22 @@ export default class ListviewViewController extends mwf.ViewController {
     /* specific methods for view functionality*/
     deleteItem(item) {
         console.log("deleteItem() item=", item);
-        alert("deleteItem() item=" + item.title + " "  + item._id);
+        //alert("deleteItem() item=" + item.title + " "  + item._id);
+
+        //this.crudops.delete(item._id).then(() => {
+        //    this.removeFromListview(item._id);
+        //});
+
+        item.delete().then(() => {
+            this.removeFromListview(item._id);
+        });
     }
 
     editItem(item) {
         console.log("editItem() item=", item);
-        alert("editItem() item=" + item.title + " "  + item._id);
+        //alert("editItem() item=" + item.title + " "  + item._id);
+        item.title += (" " + item.title);
+        //this.crudops.update(item._id, item).then(() => this.updateInListview(item._id, item));
+        item.update().then(() => this.updateInListview(item._id, item));
     }
 }

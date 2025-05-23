@@ -36,10 +36,16 @@ class MyApplication extends mwf.Application {
         //this.registerCRUD("MyEntity", this.CRUDOPS.LOCAL, GenericCRUDImplLocal.newInstance("MyEntity"));
         //this.registerCRUD("MyEntity", this.CRUDOPS.REMOTE, GenericCRUDImplRemote.newInstance("MyEntity"));
 
+        // true: dieses Datenschutz ausgeführt. data teyp consist entities.MediaItem zu "mediaItem" in der Datenbank
+        this.registerEntity("MediaItem", entities.MediaItem, true); // verknueft die Klasse MediaItem mit dem EntityManager entities.MediaItem in MyEntities.js
 
+        this.registerCRUD("MediaItem", this.CRUDOPS.LOCAL, GenericCRUDImplLocal.newInstance("MediaItem"));
+        this.registerCRUD("MediaItem", this.CRUDOPS.REMOTE, GenericCRUDImplRemote.newInstance("MediaItem"));
 
 
         // TODO: do any further application specific initialisations here
+        this.initialiseCRUD(this.CRUDOPS.LOCAL, EntityManager);
+
 
         // THIS MUST NOT BE FORGOTTEN: initialise the entity manager!
         EntityManager.initialise();
