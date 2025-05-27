@@ -32,7 +32,7 @@
 <!--class="mwf-view mwf-view-initial mwf-styling"-->
 <!--mwf-view-initial is the sign where the application starts. It is the first view that is shown when the application is started. The class mwf-view-initial is used to indicate this view.-->
 <!--mwf-styling mwf-dialog-shown-->
-<div id="myapp-listview" class="mwf-view mwf-view-initial " data-mwf-viewcontroller="ListviewViewController">
+<div id="myapp-listview" class="mwf-view mwf-view-initial" data-mwf-viewcontroller="ListviewViewController">
     <header>
         <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align"></button>
         <h1 class="mwf-left-align">Medien</h1>
@@ -80,19 +80,51 @@
 
 <!--mwf-view-initial: the first view shows up-->
 <div class="mwf-view" id="myapp-readview" data-mwf-viewcontroller="ReadviewViewController">
-    <header>
-        <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align"></button>
-        <h1 class="mwf-left-align">MEDIEN</h1>
-        <button class="mwf-imgbutton mwf-img-delete mwf-right-align"></button>
-    </header>
 
-    <main class="mwf-scrollview">
-        <img src="https://picsum.photos/100/100" />
+<!--    {item: {title: "...", src: "...", _id: "..." , addedDateString: "..."}}-->
+    <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-readview-template">
+
+        <header>
+            <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align"></button>
+            <h1 class="mwf-left-align">{{item.title}} {{item._id}}</h1>
+            <button on-click="deleteItem"  class="mwf-imgbutton mwf-img-delete mwf-right-align"></button>
+        </header>
+
+        <main class="mwf-scrollview">
+            <img src="{{item.src}}" />
+        </main>
+
+        <footer>
+            <button class="mwf-imgbutton mwf-img-backward mwf-left-align mwf-back"></button>
+        </footer>
+
+    </div>
+
+</div>
+
+<!--edit dialog  . It can also add those attribute into class : mwf-styling mwf-shown-->
+<div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog"  data-mwf-viewcontroller="GenericDialogTemplateViewController">
+    <main>
+        <h2>NEUES MEDIUM</h2>
+        <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
+        <!--  <form onsubmit="confirm('Submit?') ?  console.log('submit') : event.preventDefault(); " >-->
+        <!-- Default behaviour of a form is to submit the form (redirect to a new url address with the input value from form (input value was added into url addresse ) and reload the page.  But we want to prevent this behaviour (page reload), so we use event.preventDefault() -->
+        <!-- <form onsubmit=" confirm('Submit?') ? console.log('submit', event) : event.preventDefault();">-->
+        <form on-submit="submitEditForm">
+
+            <!--  {itemToBeEdited: {title: "...", src: "..."}}  -->
+            <input type="text" placeholder="Titel" name="title" value="{{itemToBeEdited.title}}"/>
+            <div class="mwf-buttonbar">
+                <button disabled="disabled" class="mwf-button mwf-left-align">Löschen</button>
+
+                <!--nachdem Submit button klicken:  get request aufgebaut. Browser baut den get request auf und liest the input paramter.  Ausgelesenen Input Felder als Bestandteil eines Querry Strings hinten an die URL ran. das ist dann die neue URL dieser Browser.  Der Browser schickt den Request an den Server,  von dem die das html-Dokument geladen wurde, welches das Formular darstellt. -->
+                <!-- du aber ein neues würde zum Server neues Dokument ausgeliefert -->
+                <input class="mwf-button mw-button-prio mwf-right-align" type="submit" value="Hinzufügen"/>
+            </div>
+
+        </form>
     </main>
 
-    <footer>
-        <button class="mwf-imgbutton mwf-img-backward mwf-left-align mwf-back"></button>
-    </footer>
 </div>
 
 </body>

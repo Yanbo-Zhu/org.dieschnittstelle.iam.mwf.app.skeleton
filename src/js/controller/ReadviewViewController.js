@@ -22,20 +22,39 @@ export default class ReadviewViewController extends mwf.ViewController {
 
         const myItem = this.args.itemobj //new entities.MediaItem("my new item", "https://picsum.photos/200/100");  // this.args.itemobj;
 
+
+
+        // item ist self-defined name , it can be { XYZ: myItem}. theb app.html it should be {{XYZ.title}} and {{XYZ.src}} in temnpaltye  myapp-readview-template
+        const templateProxy = this.bindElement("myapp-readview-template", {item: myItem, }, this.root).viewProxy;
+        console.log("returnValueFromBindElement: ", templateProxy);
+
+
+        // his.bindElement("myapp-readview-template", {item: myItem, }, this.root) replace the code below
         // how to use show myItem into the view
-        const h1 = this.root.querySelector("h1");
-        h1.textContent = myItem.title + " " + myItem._id ;
-        const img = this.root.getElementsByTagName("img")[0];
-        img.src = myItem.src;
+        // const h1 = this.root.querySelector("h1");
+        // h1.textContent = myItem.title + " " + myItem._id ;
+        // const img = this.root.getElementsByTagName("img")[0];
+        // img.src = myItem.src;
 
-        const deleteAction = this.root.querySelector(" header button:last-child");
+        // bind the item to the view
 
-        deleteAction.onclick = () => {
-            //alert("delete action");
+        // deleteItem is named originally in the app.html as "deleteItem"
+        templateProxy.bindAction( "deleteItem", () => {
             myItem.delete().then(() => {
                 this.previousView({item: myItem}, "itemDeleted");
             });
-        }
+
+            // const anotherItem = new entities.MediaItem("another item", "https://picsum.photos/200/100");
+            // templateProxy.update({item:anotherItem});
+        });
+
+        //     const deleteAction = this.root.querySelector(" header button:last-child");
+        // deleteAction.onclick = () => {
+        //     //alert("delete action");
+        //     myItem.delete().then(() => {
+        //         this.previousView({item: myItem}, "itemDeleted");
+        //     });
+        // }
 
         // this.root.querySelector("footer button").onclick = () => {
         //     this.previousView()
