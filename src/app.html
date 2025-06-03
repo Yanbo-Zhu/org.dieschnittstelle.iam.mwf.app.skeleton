@@ -130,6 +130,24 @@
 
 </div>
 
+<!--class: mwf-view-initial-->
+<div class="mwf-view mwf-view-initial" data-mwf-viewcontroller="FRMDemoViewController" >
+    <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-frm-demo-template">
+        <header>
+            <input class="mwf-imgbutton mwf-img-disk mwf-right-align" type="submit" value="submit" form="myapp-frm-demo-form"/>
+        </header>
+        <main>
+            <form id="myapp-frm-demo-form" on-submit="submitForm">
+                <input name="imgsrc" type="text" required="required" value="{{item.title}}"/>
+                <!-- <input class="mwf-button mwf-button-prio" type="submit" value="submit"/>-->
+                <input on-change="fileSelected" type="file"/>
+                <img src="{{item.src}}"/>
+            </form>
+        </main>
+        <footer></footer>
+    </div>
+</div>
+
 </body>
 
 </html>
