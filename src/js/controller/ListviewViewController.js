@@ -181,9 +181,42 @@ export default class ListviewViewController extends mwf.ViewController {
     editItem(item) {
         console.log("editItem() item=", item);
         //alert("editItem() item=" + item.title + " "  + item._id);
-        item.title += (" " + item.title);
+        //item.title += (" " + item.title);
         //this.crudops.update(item._id, item).then(() => this.updateInListview(item._id, item));
-        item.update().then(() => this.updateInListview(item._id, item));
+        //item.update().then(() => this.updateInListview(item._id, item));
+
+        this.showDialog("myapp-mediaitem-dialog", {
+            itemToBeEdited: item,
+            actionBindings:{
+                submitEditForm: (evt) => {
+                    //console.log("evt", evt);
+                    evt.original.preventDefault(); // prevent the default form submit action. mit diesen (prevent the default verhalten) , das Submit-Button nicht die Seite neu laden und das Summit weird nicht ins url addresse hinzugefugen
+                    //alert("submitting: " + item.title);
+                    //this.hideDialog();
+
+                    item.update().then(() => {
+                        this.hideDialog();
+                        //this.updateInListview(item._id, item);
+                        item.update().then(() => this.updateInListview(item._id, item));
+                    });
+
+                    //item.update().then(() => this.updateInListview(item._id, item));
+                },
+                deleteEditedItem: (evt) => {
+                    evt.original.preventDefault();
+                    //alert("deleteEditedItem() item=" + item.title + " "  + item._id);
+
+                    //item.delete().then(() => this.removeFromListview(item._id));
+                    item.delete().then(() => {
+                        this.hideDialog();
+                        //this.removeFromListview(item._id);
+                        item.delete().then(() => {
+                            this.removeFromListview(item._id);
+                        });
+                    });
+                }
+            }
+        });
     }
 
     async onresume() {

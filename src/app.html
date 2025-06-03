@@ -63,6 +63,7 @@
 
 <!-- Aktionsmenue -->
 <!--class = mwf-styling mwf-dialog-shown -->
+<!--mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zeitraum hinweg ausgeblendet werden -->
 <div class="mwf-listitem-menu mwf-dialog mwf-popup mwf-template mwf-databind" data-mwf-templatename="myapp-mediaItemMenu">
     <!--            {title: "...", src: "...", add: "..."} .  reactive databinding . the selected item has those attribute originally -->
     <header>
@@ -102,24 +103,26 @@
 
 </div>
 
-<!--edit dialog  . It can also add those attribute into class : mwf-styling mwf-shown-->
+<!--AddNeuItem dialog -->
+<!--It can also add those attribute into class : mwf-styling mwf-shown-->
 <div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog"  data-mwf-viewcontroller="GenericDialogTemplateViewController">
     <main>
-        <h2>NEUES MEDIUM</h2>
+        <h2>{{#if itemToBeEdited.created}}MEDIUM AKTUALISIEREN{{else}}NEUES MEDIUM{{/if}}</h2>
         <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
         <!--  <form onsubmit="confirm('Submit?') ?  console.log('submit') : event.preventDefault(); " >-->
         <!-- Default behaviour of a form is to submit the form (redirect to a new url address with the input value from form (input value was added into url addresse ) and reload the page.  But we want to prevent this behaviour (page reload), so we use event.preventDefault() -->
         <!-- <form onsubmit=" confirm('Submit?') ? console.log('submit', event) : event.preventDefault();">-->
+        <!--  on + submit: wenn submit action ausgelost-->
         <form on-submit="submitEditForm">
 
             <!--  {itemToBeEdited: {title: "...", src: "..."}}  -->
-            <input type="text" placeholder="Titel" name="title" value="{{itemToBeEdited.title}}"/>
+            <input class="mwf-autofocus" type="text" placeholder="Titel" name="title" value="{{itemToBeEdited.title}}" required="required"/>
             <div class="mwf-buttonbar">
-                <button disabled="disabled" class="mwf-button mwf-left-align">Löschen</button>
+                <button type="button" on-click="deleteEditedItem" disabled="{{#if !itemToBeEdited.created}}disabled{{/if}}" class="mwf-button mwf-left-align">Löschen</button>
 
                 <!--nachdem Submit button klicken:  get request aufgebaut. Browser baut den get request auf und liest the input paramter.  Ausgelesenen Input Felder als Bestandteil eines Querry Strings hinten an die URL ran. das ist dann die neue URL dieser Browser.  Der Browser schickt den Request an den Server,  von dem die das html-Dokument geladen wurde, welches das Formular darstellt. -->
                 <!-- du aber ein neues würde zum Server neues Dokument ausgeliefert -->
-                <input class="mwf-button mw-button-prio mwf-right-align" type="submit" value="Hinzufügen"/>
+                <input class="mwf-button mw-button-prio mwf-right-align" type="submit" value="{{#if itemToBeEdited.created}}AKTUALISIEREN{{else}}Hinzufügen{{/if}}"/>
             </div>
 
         </form>
