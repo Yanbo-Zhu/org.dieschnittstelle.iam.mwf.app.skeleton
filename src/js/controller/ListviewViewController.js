@@ -31,21 +31,42 @@ export default class ListviewViewController extends mwf.ViewController {
         addNewItemAction.onclick = () => {
 
             // TODO: add always the same item. Create a random generator for the title and src
-            const newItem = new entities.MediaItem("larem dopsum", "https://picsum.photos/300/300");
+            const newItem = new entities.MediaItem("", "https://picsum.photos/300/300");
 
-            //alert("adding: " + newItem.addedDateString)
-            console.log("adding: ", newItem);
-            // this.crudops.create(newItem) gibt ein Promise Object zuruck
-            //this.crudops.create(newItem).then((createIteam) =>
-            //    this.addToListview(createIteam));
 
-            newItem.create().then(() => this.addToListview(newItem));
+            // //alert("adding: " + newItem.addedDateString)
+            // console.log("adding: ", newItem);
+            // // this.crudops.create(newItem) gibt ein Promise Object zuruck
+            // //this.crudops.create(newItem).then((createIteam) =>
+            // //    this.addToListview(createIteam));
+            //
+            // newItem.create().then(() => this.addToListview(newItem));
 
+            this.showDialog("myapp-mediaitem-dialog", {
+
+                // itemToBeEdited : this name be used  in app html. the name n the app html should be same as the name here
+                itemToBeEdited: newItem,
+                actionBindings:{
+
+                    // submitEditForm is the name which defined in app html
+                    // newItem.title is alway same to the input value you input in form in the input "title"
+                    submitEditForm: (evt) => {
+                        console.log("evt", evt);
+                        evt.original.preventDefault(); // prevent the default form submit action. mit diesen , das Submit-Button nicht die Seite neu laden und das Summit weird nicht ins url addresse hinzugefugen
+                        //alert("submitting: " + newItem.title);
+                        this.hideDialog();
+
+                        newItem.create().then(() => this.addToListview(newItem));
+
+                    }
+                }
+            })
 
             //this.addToListview(newItem);
         }
 
 
+        // read all items with typename "MediaItem" from the IndexedDB database
         entities.MediaItem.readAll().then(allitems => {
             //console.log("ListviewViewController.oncreate(): allitems=", allitems);
 
