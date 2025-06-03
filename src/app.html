@@ -138,7 +138,7 @@
         </header>
         <main>
             <form id="myapp-frm-demo-form" on-submit="submitForm">
-                <input name="imgsrc" type="text" required="required" value="{{item.title}}"/>
+                <input name="imgsrc" type="text" required="required" value="{{item.title}}" placeholder="Titel"/>
                 <!-- <input class="mwf-button mwf-button-prio" type="submit" value="submit"/>-->
                 <input on-change="fileSelected" type="file"/>
                 <img src="{{item.src}}"/>

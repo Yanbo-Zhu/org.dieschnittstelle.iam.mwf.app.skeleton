@@ -20,14 +20,14 @@ export default class FRMDemoViewController extends mwf.ViewController {
 
 
         // TODO: do databinding, set listeners, initialise the view
-        this.viewProxy = this.bindElement("myapp-frm-demo-template", {}, this.root);
+        this.viewProxy = this.bindElement("myapp-frm-demo-template", {}, this.root).viewProxy;
 
         this.viewProxy.bindAction("submitForm", (evt) => {
             evt.original.preventDefault(); // prevent the default form submit action, so that the page does not reload
             //const formData = this.viewProxy.getFormData();
             //console.log("formData: ", formData);
             alert("onsubmit!");
-        })
+        });
 
         this.viewProxy.bindAction("fileSelected", (evt) => {
 
@@ -48,7 +48,7 @@ export default class FRMDemoViewController extends mwf.ViewController {
                     });
                 }
             }
-        })
+        });
 
         // call the superclass once creation is done
         super.oncreate();
