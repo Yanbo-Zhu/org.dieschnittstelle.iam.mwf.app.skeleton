@@ -16,6 +16,7 @@ import ListviewViewController from "./controller/ListviewViewController.js";
 import MyInitialViewController from "./controller/MyInitialViewController.js";
 import ReadviewViewController from "./controller/ReadviewViewController.js";
 import FRMDemoViewController from "./controller/FRMDemoViewController";
+import EditDialogViewController from "./controller/EditDialogViewController";
 
 // we export the framework modules required by the application and the application modules required by the framework
 mwf.app.components = {
@@ -30,6 +31,7 @@ mwf.app.components = {
     ListviewViewController,
     ReadviewViewController,
     FRMDemoViewController,
+    EditDialogViewController,
 }
 
 // then start the application

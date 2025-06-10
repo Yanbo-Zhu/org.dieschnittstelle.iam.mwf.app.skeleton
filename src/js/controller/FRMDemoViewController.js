@@ -4,6 +4,7 @@
 import {mwf} from "vfh-iam-mwf-base";
 import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
+import {LocalFileSystemReferenceHandler} from "../model/LocalFileSystemReferenceHandler";
 
 export default class FRMDemoViewController extends mwf.ViewController {
 
@@ -18,35 +19,61 @@ export default class FRMDemoViewController extends mwf.ViewController {
     async oncreate() {
         const myItem = new entities.MediaItem("lirem", "https://picsum.photos/200/100");
 
+        const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
 
         // TODO: do databinding, set listeners, initialise the view
         this.viewProxy = this.bindElement("myapp-frm-demo-template", {}, this.root).viewProxy;
 
-        this.viewProxy.bindAction("submitForm", (evt) => {
+        this.viewProxy.bindAction("submitForm", async (evt) => {
             evt.original.preventDefault(); // prevent the default form submit action, so that the page does not reload
             //const formData = this.viewProxy.getFormData();
             //console.log("formData: ", formData);
             alert("onsubmit!");
+
+            if (myItem.imgFile) {
+                myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile);
+                console.log("myItem.src: ", myItem.src);
+                delete myItem.imgFile; // remove the file from the item, so that it is not stored in the IndexDB database, because this imgFile is already stored in the local file system
+            }
+
+            myItem.create().then(() => {
+                alert("created!");
+            });
+
         });
 
-        this.viewProxy.bindAction("fileSelected", (evt) => {
+        this.viewProxy.bindAction("fileSelected", async (evt) => {
 
-            if(evt.original.target.files[0]) {
+            if (evt.original.target.files[0]) {
                 console.log("fileSelected: ", evt.original.tragrt, evt.original.target.files[0]);
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(evt.original.target.files[0]);
-                fileReader.onload = (e) => {
-                    //console.log("fileReader Loaded : ", fileReader.result);  // the file content as base64 encoded string (Base64 codiert Bild oder Datei)
 
-                    //const img = this.root.querySelector("main form img");
-                    //img.src = fileReader.result;
+                const imgFile = evt.original.target.files[0];
 
-                    myItem.src = fileReader.result;
-                    this.viewProxy.update({item: myItem});
-                    myItem.create().then(() => {
-                        alert("oncreated!");
-                    });
-                }
+                // const fileReader = new FileReader();
+                // fileReader.readAsDataURL(evt.original.target.files[0]);
+                // fileReader.onload = (e) => {
+                //     //console.log("fileReader Loaded : ", fileReader.result);  // the file content as base64 encoded string (Base64 codiert Bild oder Datei)
+                //
+                //     //const img = this.root.querySelector("main form img");
+                //     //img.src = fileReader.result;
+                //
+                //     myItem.src = fileReader.result;
+                //     this.viewProxy.update({item: myItem});
+                //     myItem.create().then(() => {
+                //         alert("oncreated!");
+                //     });
+                // }
+
+                myItem.src = URL.createObjectURL(imgFile);
+                this.viewProxy.update({item: myItem});
+                myItem.imgFile = imgFile; // store the file in the item, so that it can be used later
+
+                // const localReference = await fsHandler.createLocalFileSystemReference(imgFile);
+                // console.log("localReference: ", localReference);
+                // const resolvedReference = await fsHandler.resolveLocalFileSystemReference(localReference)
+                // console.log("resolvedReference: ", resolvedReference);
+
+
             }
         });
 

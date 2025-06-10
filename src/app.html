@@ -105,7 +105,7 @@
 
 <!--AddNeuItem dialog -->
 <!--It can also add those attribute into class : mwf-styling mwf-shown-->
-<div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog"  data-mwf-viewcontroller="GenericDialogTemplateViewController">
+<div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog"  data-mwf-viewcontroller="EditDialogViewController">
     <main>
         <h2>{{#if itemToBeEdited.created}}MEDIUM AKTUALISIEREN{{else}}NEUES MEDIUM{{/if}}</h2>
         <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
@@ -116,7 +116,7 @@
         <form on-submit="submitEditForm">
 
             <!--  {itemToBeEdited: {title: "...", src: "..."}}  -->
-            <input class="mwf-autofocus" type="text" placeholder="Titel" name="title" value="{{itemToBeEdited.title}}" required="required"/>
+            <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" placeholder="Titel" name="title" value="{{itemToBeEdited.title}}" required="required"/>
             <div class="mwf-buttonbar">
                 <button type="button" on-click="deleteEditedItem" disabled="{{#if !itemToBeEdited.created}}disabled{{/if}}" class="mwf-button mwf-left-align">Löschen</button>
 
@@ -131,16 +131,20 @@
 </div>
 
 <!--class: mwf-view-initial-->
-<div class="mwf-view mwf-view-initial" data-mwf-viewcontroller="FRMDemoViewController" >
+<div class="mwf-view" data-mwf-viewcontroller="FRMDemoViewController" >
     <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-frm-demo-template">
         <header>
             <input class="mwf-imgbutton mwf-img-disk mwf-right-align" type="submit" value="submit" form="myapp-frm-demo-form"/>
         </header>
         <main>
             <form id="myapp-frm-demo-form" on-submit="submitForm">
-                <input name="imgsrc" type="text" required="required" value="{{item.title}}" placeholder="Titel"/>
-                <!-- <input class="mwf-button mwf-button-prio" type="submit" value="submit"/>-->
-                <input on-change="fileSelected" type="file"/>
+                <fieldset class="mwf-material">
+                    <legend>Image</legend>
+                    <input name="imgsrc" type="text" required="required" value="{{item.title}}" />
+                    <!-- <input class="mwf-button mwf-button-prio" type="submit" value="submit"/>-->
+                    <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-demo-form-fileinput" />
+                    <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera" for="myapp-frm-demo-form-fileinput"></label>
+                </fieldset>
                 <img src="{{item.src}}"/>
             </form>
         </main>
