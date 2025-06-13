@@ -137,7 +137,7 @@
 </div>
 
 <!--class: mwf-view-initial-->
-<div id="myapp-demo-view" class="mwf-view" data-mwf-viewcontroller="FRMDemoViewController" >
+<div id="myapp-demo-view" class="mwf-view mwf-view-initial" data-mwf-viewcontroller="FRMDemoViewController" >
     <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-frm-demo-template">
         <header>
             <input class="mwf-imgbutton mwf-img-disk mwf-right-align" type="submit" value="submit" form="myapp-frm-demo-form"/>
@@ -151,6 +151,8 @@
                     <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-demo-form-fileinput" />
                     <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera" for="myapp-frm-demo-form-fileinput"></label>
                 </fieldset>
+
+                <input type="checkbox" checked="{{item.remote}}"/>
                 <img src="{{item.src}}"/>
             </form>
         </main>
@@ -159,7 +161,7 @@
 </div>
 
 <!-- MapsDemoViewController will be found in Main.js. Please input MapsDemoViewController in mwr.app.components in main.js-->
-<div class="mwf-view mwf-view-initial" id="myapp-maps-demo" data-mwf-viewcontroller="MapsDemoViewController">
+<div class="mwf-view" id="myapp-maps-demo" data-mwf-viewcontroller="MapsDemoViewController">
     <header>
         <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
         <h1>Maps Demo</h1>
