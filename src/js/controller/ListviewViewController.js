@@ -6,6 +6,7 @@ import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
 import {GenericCRUDImplLocal} from "vfh-iam-mwf-base";
 import {createId} from "vfh-iam-mwf-base/src/js/mwf/crud/mwfEntityManager";
+import {LocalFileSystemReferenceHandler} from "../model/LocalFileSystemReferenceHandler";
 
 
 export default class ListviewViewController extends mwf.ViewController {
@@ -65,12 +66,23 @@ export default class ListviewViewController extends mwf.ViewController {
             //this.addToListview(newItem);
         }
 
+        const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
 
         // read all items with typename "MediaItem" from the IndexedDB database
-        entities.MediaItem.readAll().then(allitems => {
+        entities.MediaItem.readAll().then(async allitems => {
             //console.log("ListviewViewController.oncreate(): allitems=", allitems);
 
             console.log("items: ", allitems); // this.items addDateString (item.added) is undefined, weil die Daten aus der Datenbank nicht typisiert sind. weil items nicht in der Klasse MediaItem sind
+
+            //convert url in local file system reference into Object URL
+            for(let i = 0; i < allitems.length; i++) {
+                const currentMediaItem = allitems[i];
+
+                if (currentMediaItem.src) {
+                    currentMediaItem.src = await fsHandler.resolveLocalFileSystemReference(currentMediaItem.src);
+                }
+            }
+
             this.initialiseListview(allitems);
         });
 

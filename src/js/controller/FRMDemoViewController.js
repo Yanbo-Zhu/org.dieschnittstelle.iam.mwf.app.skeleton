@@ -4,6 +4,9 @@
 import {mwf} from "vfh-iam-mwf-base";
 import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
+import {LocalFileSystemReferenceHandler} from "../model/LocalFileSystemReferenceHandler";
+
+import ExifReader from "exifreader"; // import the exifreader library to read EXIF data from images
 
 export default class FRMDemoViewController extends mwf.ViewController {
 
@@ -16,42 +19,122 @@ export default class FRMDemoViewController extends mwf.ViewController {
      * for any view: initialise the view
      */
     async oncreate() {
-        const myItem = new entities.MediaItem("lirem", "https://picsum.photos/200/100");
 
+        await super.oncreate();
+
+    }
+
+    async onresume() {
+
+        await super.onresume();
+
+        console.log("ExifReader: ", ExifReader);
+
+        //const myItem = new entities.MediaItem("lirem", "https://picsum.photos/200/100");
+
+        const myItem = new entities.MediaItem("lirem");
+        //myItem.remote = true; // set a flag to indicate that this item is remote, so that it can be handled differently in the view
+
+        const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
 
         // TODO: do databinding, set listeners, initialise the view
-        this.viewProxy = this.bindElement("myapp-frm-demo-template", {}, this.root);
+        this.viewProxy = this.bindElement("myapp-frm-demo-template", {item:myItem}, this.root).viewProxy;
 
-        this.viewProxy.bindAction("submitForm", (evt) => {
+        this.viewProxy.bindAction("submitForm", async (evt) => {
             evt.original.preventDefault(); // prevent the default form submit action, so that the page does not reload
             //const formData = this.viewProxy.getFormData();
             //console.log("formData: ", formData);
-            alert("onsubmit!");
-        })
+            alert("onsubmit! Remote: " + myItem.remote);
 
-        this.viewProxy.bindAction("fileSelected", (evt) => {
+            if(myItem.remote) {
+                // if the item is remote, we can upload it to a server
+                const uploaddata = new FormData();
+                uploaddata.append("imgdata", myItem.imgFile); // append the file to the form data, so that it can be uploaded
+                uploaddata.append("anotherField", "some value"); // append another field to the form data, if needed
 
-            if(evt.original.target.files[0]) {
-                console.log("fileSelected: ", evt.original.tragrt, evt.original.target.files[0]);
-                const fileReader = new FileReader();
-                fileReader.readAsDataURL(evt.original.target.files[0]);
-                fileReader.onload = (e) => {
-                    //console.log("fileReader Loaded : ", fileReader.result);  // the file content as base64 encoded string (Base64 codiert Bild oder Datei)
+                const request  = new XMLHttpRequest();
+                request.open("POST", "http://localhost:7077/api/upload"); //
 
-                    //const img = this.root.querySelector("main form img");
-                    //img.src = fileReader.result;
+                const response = request.send(uploaddata);
+                console.log("response: ", response); // keine response, da reponse noch nicht zur Verfügung steht, da die Anfrage asynchron ist.  has to be waited. use callback method . send is keine Promise
 
-                    myItem.src = fileReader.result;
-                    this.viewProxy.update({item: myItem});
+                // request.onload() is called when the request is completed
+                request.onload = () => {
+                    alert("loaded: " + request.responseText);
+                    const responseData = JSON.parse(request.responseText);
+                    console.log("responseData; ", responseData);
+                    delete myItem.imgFile; // remove the file from the item, so that it is not stored in the IndexDB database, because this imgFile is already stored in the local file system
+                    myItem.src = "http://localhost:7077/" + responseData.data.imgdata;
+                    console.log("myItem ", myItem);
+
                     myItem.create().then(() => {
-                        alert("oncreated!");
+                        alert("created reomotely!");
+
                     });
                 }
+
+            } else {
+                // if the item is not remote, we can store it in the local file system
+                if (myItem.imgFile) {
+                    myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile);
+                    console.log("myItem.src: ", myItem.src);
+                    delete myItem.imgFile; // remove the file from the item, so that it is not stored in the IndexDB database, because this imgFile is already stored in the local file system
+
+                }
+
+                myItem.create().then(() => {
+                    alert("created!");
+                });
             }
-        })
+
+
+
+        });
+
+        this.viewProxy.bindAction("fileSelected", async (evt) => {
+
+            if (evt.original.target.files[0]) {
+                console.log("fileSelected: ", evt.original.tragrt, evt.original.target.files[0]);
+
+                const imgFile = evt.original.target.files[0];
+
+                // const fileReader = new FileReader();
+                // fileReader.readAsDataURL(evt.original.target.files[0]);
+                // fileReader.onload = (e) => {
+                //     //console.log("fileReader Loaded : ", fileReader.result);  // the file content as base64 encoded string (Base64 codiert Bild oder Datei)
+                //
+                //     //const img = this.root.querySelector("main form img");
+                //     //img.src = fileReader.result;
+                //
+                //     myItem.src = fileReader.result;
+                //     this.viewProxy.update({item: myItem});
+                //     myItem.create().then(() => {
+                //         alert("oncreated!");
+                //     });
+                // }
+
+                myItem.src = URL.createObjectURL(imgFile);
+                this.viewProxy.update({item: myItem});
+                myItem.imgFile = imgFile; // store the file in the item, so that it can be used later
+
+                // const localReference = await fsHandler.createLocalFileSystemReference(imgFile);
+                // console.log("localReference: ", localReference);
+                // const resolvedReference = await fsHandler.resolveLocalFileSystemReference(localReference)
+                // console.log("resolvedReference: ", resolvedReference);
+
+                // const imgMetadataPromise = ExifReader.load(imgFile);
+                // console.log("imgMetadataPromise:" + imgMetadataPromise);
+                // imgMetadataPromise.then(imgMetadata => {
+                //     console.log("imgMetadata: ", imgMetadata);
+                // });
+
+                const imgMetadata = await ExifReader.load(imgFile);
+                console.log("imgMetadata:" + imgMetadata);
+            }
+        });
 
         // call the superclass once creation is done
-        super.oncreate();
+        //super.oncreate();
     }
 
 

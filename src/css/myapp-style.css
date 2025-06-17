@@ -9,3 +9,13 @@
 #myapp-readview main li img {
     width: 100%;
 }
+
+#myapp-maproot {
+    width: 100%;
+    height: 100%;
+}
+
+.myapp-marker-popup img {
+    /*max-width: 100%; 250px;*/
+    max-width: 100%;
+}

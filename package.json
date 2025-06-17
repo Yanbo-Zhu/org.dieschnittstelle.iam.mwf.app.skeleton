@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "circular-dependency-plugin": "^5.2.2",
-    "vfh-iam-mwf-base": "0.1.2"
+    "vfh-iam-mwf-base": "0.1.2",
+    "exifreader": "4.31.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.8",
