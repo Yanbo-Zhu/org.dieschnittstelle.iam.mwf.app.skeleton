@@ -6,8 +6,8 @@ import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
 
 
-let mapController ;
-let mapView;
+export let mapController ;
+export let mapView;
 
 export default class MapsDemoViewController extends mwf.ViewController {
 
