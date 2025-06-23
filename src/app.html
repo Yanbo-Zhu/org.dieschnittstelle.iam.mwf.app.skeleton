@@ -113,7 +113,7 @@
 <!--It can also add those attribute into class : mwf-styling mwf-shown-->
 <div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog"  data-mwf-viewcontroller="EditDialogViewController">
     <main>
-        <h2>{{#if itemToBeEdited.created}}MEDIUM AKTUALISIEREN{{else}}NEUES MEDIUM{{/if}}</h2>
+        <h2>{{#if itemToBeEdited.created}}update: {{itemToBeEdited.title}}. MEDIUM AKTUALISIEREN{{else}}NEUES MEDIUM{{/if}}</h2>
         <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
         <!--  <form onsubmit="confirm('Submit?') ?  console.log('submit') : event.preventDefault(); " >-->
         <!-- Default behaviour of a form is to submit the form (redirect to a new url address with the input value from form (input value was added into url addresse ) and reload the page.  But we want to prevent this behaviour (page reload), so we use event.preventDefault() -->
@@ -187,6 +187,11 @@
         </li>
     </ul>
 </div>
+
+<!--<div class="mwf-toast">-->
+<!--  lorem ipsum-->
+<!--</div>-->
+
 
 </body>
 
