@@ -5,6 +5,8 @@ import {mwf} from "vfh-iam-mwf-base";
 import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
 
+import {mapController} from "./MapsDemoViewController";
+
 export default class ReadviewViewController extends mwf.ViewController {
 
     // instance attributes set by mwf after instantiation
@@ -19,6 +21,7 @@ export default class ReadviewViewController extends mwf.ViewController {
         // TODO: do databinding, set listeners, initialise the view
         console.log("root=", this.root);
         console.log("args=", this.args);
+        console.log("mapController=", mapController);
 
         const myItem = this.args.itemobj //new entities.MediaItem("my new item", "https://picsum.photos/200/100");  // this.args.itemobj;
 

@@ -197,6 +197,8 @@ export default class ListviewViewController extends mwf.ViewController {
         //this.crudops.update(item._id, item).then(() => this.updateInListview(item._id, item));
         //item.update().then(() => this.updateInListview(item._id, item));
 
+
+        this.itemToBeEdited = {title: item.title, src: item.src, remote: item.remote}; // {... item}this is used in the app html to bind the item to be edited to the dialog
         this.showDialog("myapp-mediaitem-dialog", {
             itemToBeEdited: item,
             actionBindings:{
@@ -204,7 +206,7 @@ export default class ListviewViewController extends mwf.ViewController {
                     //console.log("evt", evt);
                     evt.original.preventDefault(); // prevent the default form submit action. mit diesen (prevent the default verhalten) , das Submit-Button nicht die Seite neu laden und das Summit weird nicht ins url addresse hinzugefugen
                     //alert("submitting: " + item.title);
-                    //this.hideDialog();
+                    this.hideDialog(true);
 
                     item.update().then(() => {
                         this.hideDialog();
@@ -214,9 +216,12 @@ export default class ListviewViewController extends mwf.ViewController {
 
                     //item.update().then(() => this.updateInListview(item._id, item));
                 },
+
                 deleteEditedItem: (evt) => {
                     evt.original.preventDefault();
                     //alert("deleteEditedItem() item=" + item.title + " "  + item._id);
+
+                    this.hideDialog()
 
                     //item.delete().then(() => this.removeFromListview(item._id));
                     item.delete().then(() => {
@@ -236,6 +241,16 @@ export default class ListviewViewController extends mwf.ViewController {
         super.onresume();
         //super.resume();
 
+    }
+
+    async hideDialog(fromSubmit) {
+
+        console.log("ListviewViewController.hideDialog(): ", this.dialog);
+        await super.hideDialog();
+
+        if (!fromSubmit && this.itemToBeEdited) {
+            console.log("ListviewViewController.hideDialog() has been called");  //here restore action setzen
+        }
     }
 
 }

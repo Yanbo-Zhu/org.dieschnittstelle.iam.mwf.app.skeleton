@@ -31,6 +31,18 @@ export default class EditDialogViewController extends GenericDialogTemplateViewC
     }
 
 
+    // async onpause() {
+    //     await super.onpause();
+    //     alert("EditDialogViewController::onpause() ", this );
+    // }
+    //
+    // async hidedialog() {
+    //     await super.hidedialog();
+    //     console.log("hideDialog() called");
+    //
+    // }
+
+
 
 
 }
