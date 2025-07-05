@@ -34,6 +34,7 @@ export class LocalFileSystemReferenceHandler {
 
         // use the name of the file
         const filename = filedata.name.replaceAll(" ","_");
+
         // get a handle for writing the filedata
         const fileHandle = await this.rootDirectoryHandle.getFileHandle(
             filename,

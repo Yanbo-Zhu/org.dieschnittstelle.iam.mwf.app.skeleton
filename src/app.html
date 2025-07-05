@@ -33,15 +33,19 @@
 <body data-mwf-application="MyApplication" class="mwf-loading-app">
 
 <!-- TODO-REPEATED: add new views here -->
+
+<!--List View   ---------------------------------------------------->
 <!--in the Beginning, data-mwf-viewcontroller="MyInitialViewController"-->
-<!--data-mwf-viewcontroller="ListviewViewController" is equal to: class ListviewViewController zu instanzierenmm. constructor und oncreate() methode werde aufgeruft-->
-<!--class="mwf-view mwf-view-initial mwf-styling"-->
-<!--mwf-view-initial is the sign where the application starts. It is the first view that is shown when the application is started. The class mwf-view-initial is used to indicate this view.-->
-<!--mwf-styling mwf-dialog-shown-->
+<!--data-mwf-viewcontroller="ListviewViewController" is equal to: class ListviewViewController zu instanziieren. constructor und oncreate() methode werde aufgeruft-->
+<!--class="mwf-view mwf-view-initial mwf-styling" or "mwf-styling mwf-dialog-shown"
+mwf-view-initial is the sign where the application starts. It is the first view that is shown when the application is started. The class mwf-view-initial is used to indicate this view.
+--->
 <div id="myapp-listview" class="mwf-view mwf-view-initial" data-mwf-viewcontroller="ListviewViewController">
     <header>
         <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
         <h1 class="mwf-left-align">Medien</h1>
+
+        <!-- please see addNewItemAction.onclick in ListviewViewController.js -->
         <button id="myapp-addNewItem" class="mwf-imgbutton mwf-img-plus mwf-right-align"></button>
     </header>
     <main class="mwf-scrollview">
@@ -67,30 +71,11 @@
     </footer>
 </div>
 
-<!-- Aktionsmenue -->
-<!--class = mwf-styling mwf-dialog-shown -->
-<!--mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zeitraum hinweg ausgeblendet werden -->
-<div class="mwf-listitem-menu mwf-dialog mwf-popup mwf-template mwf-databind" data-mwf-templatename="myapp-mediaItemMenu">
-    <!--            {title: "...", src: "...", add: "..."} .  reactive databinding . the selected item has those attribute originally -->
-    <header>
-        <h2 class="mwf-dyncontent">{{title}} {{_id}}</h2>
-    </header>
-    <main>
-        <ul>
-<!--            mwf-menu-item is logic. mwf-li-singetitle is styling -->
-            <li class="mwf-li-singletitle mwf-menu-item" data-mwf-targetaction="deleteItem">Delete</li>
-            <li class="mwf-li-singletitle mwf-menu-item" data-mwf-targetaction="editItem">Edit </li>
-        </ul>
-    </main>
-</div>
-
-
+<!--Read View: Show the Photo ------------------------------------------>
 <!--mwf-view-initial: the first view shows up-->
 <div class="mwf-view" id="myapp-readview" data-mwf-viewcontroller="ReadviewViewController">
-
 <!--    {item: {title: "...", src: "...", _id: "..." , addedDateString: "..."}}-->
     <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-readview-template">
-
         <header>
             <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
             <h1 class="mwf-left-align">{{item.title}} {{item._id}}</h1>
@@ -109,7 +94,22 @@
 
 </div>
 
-<!--AddNeuItem dialog -->
+
+<!-- Maps View ---------------------------------------------------->
+<div class="mwf-view" id="myapp-maps-demo" data-mwf-viewcontroller="MapsDemoViewController">
+    <header>
+        <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
+        <h1>Maps Demo</h1>
+    </header>
+    <main>
+        <div id="myapp-maproot">
+        </div>
+    </main>
+    <footer></footer>
+</div>
+
+<!--AddNeuItem dialog:----------------------------------------------------->
+<!--This windows will pop up after the plus button in the top bar is clicked. Imageupload is not embedded in this dialog-->
 <!--It can also add those attribute into class : mwf-styling mwf-shown-->
 <div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog"  data-mwf-viewcontroller="EditDialogViewController">
     <main>
@@ -136,6 +136,8 @@
 
 </div>
 
+<!--AddNeuItem dialog ---------------------------------------------------->
+<!--image can be selected and uploaded through this dialog.-->
 <!--class: mwf-view-initial-->
 <div id="myapp-demo-view" class="mwf-view" data-mwf-viewcontroller="FRMDemoViewController" >
     <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-frm-demo-template">
@@ -160,21 +162,30 @@
     </div>
 </div>
 
-<!-- MapsDemoViewController will be found in Main.js. Please input MapsDemoViewController in mwr.app.components in main.js-->
-<div class="mwf-view" id="myapp-maps-demo" data-mwf-viewcontroller="MapsDemoViewController">
+
+
+<!-- Action Dialog: Edit or Delete --------------------------------------------->
+<!--This dialog pops up after the option button (three points icons) is clicked. Every item in the listview has this button, so that the dialog can be opened for each item in the listview-->
+<!--class = mwf-styling mwf-dialog-shown
+mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zeitraum hinweg ausgeblendet werden
+-->
+<div class="mwf-listitem-menu mwf-dialog mwf-popup mwf-template mwf-databind" data-mwf-templatename="myapp-mediaItemMenu">
+    <!--            {title: "...", src: "...", add: "..."} .  reactive databinding . the selected item has those attribute originally -->
     <header>
-        <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
-        <h1>Maps Demo</h1>
+        <h2 class="mwf-dyncontent">{{title}} {{_id}}</h2>
     </header>
     <main>
-        <div id="myapp-maproot">
-
-        </div>
-
+        <ul>
+            <!--            mwf-menu-item is logic. mwf-li-singetitle is styling -->
+            <li class="mwf-li-singletitle mwf-menu-item" data-mwf-targetaction="deleteItem">Delete</li>
+            <li class="mwf-li-singletitle mwf-menu-item" data-mwf-targetaction="editItem">Edit </li>
+        </ul>
     </main>
-    <footer></footer>
 </div>
 
+
+<!--Sidebar: For switching views ---------------------------------------------------->
+<!--data-mwf-targetview decide which view can be switched to-->
 <div id="sidemenu" class="mwf-sidemenu mwf-expanded mwf-view-component mwf-attaching mwf-initialise-onload" data-mwf-viewcontroller="SidemenuViewController">
     <ul>
         <li class="mwf-li-singletitle mwf-menu-item" data-mwf-id="mainmenu-items" data-mwf-targetview="myapp-listview">
@@ -187,6 +198,7 @@
         </li>
     </ul>
 </div>
+
 
 <!--<div class="mwf-toast">-->
 <!--  lorem ipsum-->
