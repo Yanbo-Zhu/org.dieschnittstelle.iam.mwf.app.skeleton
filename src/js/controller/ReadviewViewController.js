@@ -19,6 +19,7 @@ export default class ReadviewViewController extends mwf.ViewController {
      */
     async oncreate() {
         // TODO: do databinding, set listeners, initialise the view
+        console.log("ReadviewViewController::oncreate()");
         console.log("root=", this.root);
         console.log("args=", this.args);
         console.log("mapController=", mapController);
@@ -26,11 +27,14 @@ export default class ReadviewViewController extends mwf.ViewController {
         const myItem = this.args.itemobj //new entities.MediaItem("my new item", "https://picsum.photos/200/100");  // this.args.itemobj;
 
 
+        /*
+         * bindElement(elementid, data, parent)
+         * bind a view element to some data - elementid might either be an element or a template - this function will be used by subclasses, e.g. for instantiating forms
 
-        // item ist self-defined name , it can be { XYZ: myItem}. theb app.html it should be {{XYZ.title}} and {{XYZ.src}} in temnpaltye  myapp-readview-template
+         * in {item: myItem, }, the item ist self-defined name. Example: if we set { XYZ: myItem}. Then, in app.html, it should use {{XYZ.title}} and {{XYZ.src}} in template  myapp-readview-template
+         */
         const templateProxy = this.bindElement("myapp-readview-template", {item: myItem, }, this.root).viewProxy;
         console.log("returnValueFromBindElement: ", templateProxy);
-
 
         // his.bindElement("myapp-readview-template", {item: myItem, }, this.root) replace the code below
         // how to use show myItem into the view
@@ -72,19 +76,18 @@ export default class ReadviewViewController extends mwf.ViewController {
     constructor() {
         super();
 
-        console.log("ReadviewViewController()");
+        console.log("ReadviewViewController(): constructor called");
     }
 
     /*
-     * for views that initiate transitions to other views
+     * For views that initiate transitions to other views
      * NOTE: return false if the view shall not be returned to, e.g. because we immediately want to display its previous view. Otherwise, do not return anything.
      */
     async onReturnFromNextView(nextviewid, returnValue, returnStatus) {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
 
-        console.log("onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
-
-        //
+        console.log("ReadviewViewController, onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
+        // if we return from a view that deleted an item, we remove it from the listview
         if (returnStatus === "itemDeleted" && returnValue) {
             this.removeFromListview(returnValue.item._id);
         }

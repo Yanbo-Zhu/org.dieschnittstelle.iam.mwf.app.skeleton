@@ -5,9 +5,10 @@ import {mwf} from "vfh-iam-mwf-base";
 import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
 
-
 export let mapController ;
 export let mapView;
+
+// L : Leaflet library is impoerted in the app.html file
 
 export default class MapsDemoViewController extends mwf.ViewController {
 
@@ -17,7 +18,8 @@ export default class MapsDemoViewController extends mwf.ViewController {
     // TODO-REPEATED: declare custom instance attributes for this controller
 
     /*
-     * for any view: initialise the view. Aufgerufen wenn ein Controller erstmal instanziert wird, also wenn die View zum ersten Mal angezeigt wird. oncreate() wird nur einmal aufgerufen, auch wenn die View mehrfach angezeigt wird.
+     *oncreate(): initialise the view. oncreate() wird aufgerufen, wenn ein Controller erstmal instanziiert wird, also wenn die View zum ersten Mal angezeigt wird.
+     * oncreate() wird nur einmal aufgerufen, auch wenn die View mehrfach angezeigt wird.
      * oncreate() wird nicht aufgerufen, wenn die View nur wieder angezeigt wird, nachdem sie vorher schon einmal angezeigt wurde. In diesem Fall wird onresume() aufgerufen.
      * oncreate wird aufgerufen, wenn User den Ansicht noch nicht gesehen hat, also wenn die View zum ersten Mal angezeigt wird.
      */
@@ -30,9 +32,9 @@ export default class MapsDemoViewController extends mwf.ViewController {
     }
 
     /*
-        * for any view: resume the view after it has been resumed. Aufgerufen wenn ein Controller wieder angezeigt wird, nachdem er vorher schon einmal angezeigt wurde.
-        * onresume wird aufgerufen, wenn User den Ansicht schon gesehen hat,
-        * onresume wird aufgetrufen, wenn Ansciht wechseln, aber nicht neu laden will, also wenn die View schon einmal angezeigt wurde.
+        * Resume the view after it has been resumed. onresume() Aufgerufen wenn ein Controller wieder angezeigt wird, nachdem er vorher schon einmal angezeigt wurde.
+        * onresume() wird aufgerufen, wenn User den Ansicht schon gesehen hat,
+        * onresume() wird aufgerufen, wenn Ansicht wechseln, aber nicht neu laden will, also wenn die View schon einmal angezeigt wurde.
      */
     async onresume() {
         await super.onresume();
@@ -46,12 +48,10 @@ export default class MapsDemoViewController extends mwf.ViewController {
             L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png").addTo(mapController);
             mapController.setView([51.505, -0.09], 13);
         } else {
-            //
             if(!this.root.querySelector("#myapp-maproot")) {
                 this.root.querySelector("#main").appendChild(mapView);
             }
         }
-
 
         const items  = [
             new entities.MediaItem("lirem", "https://picsum.photos/100/200"),
@@ -94,7 +94,6 @@ export default class MapsDemoViewController extends mwf.ViewController {
 
             marker.bindPopup(markerPopup);
 
-
             markerPopup.onclick = () => {
                 alert("Marker clicked: " + item.title);
                 this.nextView("myapp-demo-view")
@@ -108,14 +107,13 @@ export default class MapsDemoViewController extends mwf.ViewController {
 
     }
 
+    // onpause(): called when the view is paused, e.g. when the user navigates to another view or closes the app
     async onpause() {
         alert("MapsDemoViewController::onpause()");
     }
 
-
     constructor() {
         super();
-
         console.log("MapsDemoViewController()");
     }
 

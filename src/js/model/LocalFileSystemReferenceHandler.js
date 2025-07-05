@@ -52,7 +52,7 @@ export class LocalFileSystemReferenceHandler {
         return fsPrefix + filename;
     }
 
-    // resolves a proprietary url to an object url
+    // resolves a proprietary url/ local url in local file system to an object url
     async resolveLocalFileSystemReference(fileurl) {
         if (!fileurl.startsWith(fsPrefix)) {
             return fileurl;

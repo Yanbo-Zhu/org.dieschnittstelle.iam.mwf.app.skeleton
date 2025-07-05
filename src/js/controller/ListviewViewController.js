@@ -27,6 +27,8 @@ export default class ListviewViewController extends mwf.ViewController {
         console.log("oncreate() root=", this.root);
         console.log("oncreate() items=", this.items);
 
+
+        // Add action after the plus button with id "myapp-addNewItem" is clicked
         const addNewItemAction = this.root.querySelector("#myapp-addNewItem");
 
         addNewItemAction.onclick = () => {
@@ -49,11 +51,11 @@ export default class ListviewViewController extends mwf.ViewController {
                 itemToBeEdited: newItem,
                 actionBindings:{
 
-                    // submitEditForm is the name which defined in app html
+                    // submitEditForm is the name which defined in app.html
                     // newItem.title is alway same to the input value you input in form in the input "title"
                     submitEditForm: (evt) => {
                         console.log("evt", evt);
-                        evt.original.preventDefault(); // prevent the default form submit action. mit diesen , das Submit-Button nicht die Seite neu laden und das Summit weird nicht ins url addresse hinzugefugen
+                        evt.original.preventDefault(); // prevent the default form submit action. mit diesen , das Submit-Button nicht die Seite neu laden und das Summit wird nicht ins url addresse hinzugefugen
                         //alert("submitting: " + newItem.title);
                         this.hideDialog();
 
@@ -69,22 +71,24 @@ export default class ListviewViewController extends mwf.ViewController {
         const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
 
         // read all items with typename "MediaItem" from the IndexedDB database
-        entities.MediaItem.readAll().then(async allitems => {
+        entities.MediaItem.readAll().then(
+            async allitems => {
             //console.log("ListviewViewController.oncreate(): allitems=", allitems);
 
-            console.log("items: ", allitems); // this.items addDateString (item.added) is undefined, weil die Daten aus der Datenbank nicht typisiert sind. weil items nicht in der Klasse MediaItem sind
+                console.log("items: ", allitems); // this.items addDateString (item.added) is undefined, weil die Daten aus der Datenbank nicht typisiert sind. weil items nicht in der Klasse MediaItem sind
 
-            //convert url in local file system reference into Object URL
-            for(let i = 0; i < allitems.length; i++) {
-                const currentMediaItem = allitems[i];
+                //convert local url in local file system reference into Object URL
+                for(let i = 0; i < allitems.length; i++) {
+                    const currentMediaItem = allitems[i];
 
-                if (currentMediaItem.src) {
-                    currentMediaItem.src = await fsHandler.resolveLocalFileSystemReference(currentMediaItem.src);
+                    if (currentMediaItem.src) {
+                        currentMediaItem.src = await fsHandler.resolveLocalFileSystemReference(currentMediaItem.src);
+                    }
                 }
-            }
 
-            this.initialiseListview(allitems);
-        });
+                this.initialiseListview(allitems);
+            }
+        );
 
         //this.initialiseListview(this.items);
 
@@ -94,11 +98,11 @@ export default class ListviewViewController extends mwf.ViewController {
 
 
     constructor() {
-        super();
+        console.log("The constructor of ListviewViewController() was called");
 
+        super();
         this.crudops = GenericCRUDImplLocal.newInstance("MediaItem");
 
-        console.log("The constructor of ListviewViewController() was called");
 
         // this.items = [
         //     new entities.MediaItem("lirem", "https://picsum.photos/100/100"),
@@ -125,11 +129,10 @@ export default class ListviewViewController extends mwf.ViewController {
      * TODO: delete if no listview is used or if databinding uses ractive templates
      */
     // bindListItemView(listviewid, itemview, itemobj) {
-    //     // TODO: implement how attributes of itemobj shall be displayed in itemview
-    //     //console.log("ListviewViewController.bindListItemView(): listviewid=", listviewid);
+    //     TODO: implement how attributes of itemobj shall be displayed in itemview
+    //     console.log("ListviewViewController.bindListItemView(): listviewid=", listviewid);
     //     console.log("ListviewViewController.bindListItemView():     itemview=", itemview);
     //     console.log("ListviewViewController.bindListItemView():     itemobj=", itemobj);
-    //
     //     itemview.root.querySelector("h2").textContent = itemobj.title;
     //     itemview.root.getElementsByTagName("img")[0].src = itemobj.src;
     //     itemview.root.querySelector("h3").textContent = itemobj.added;
@@ -147,8 +150,6 @@ export default class ListviewViewController extends mwf.ViewController {
         //alert("onListItemSelected() itemobj selected=" + itemobj.title);
 
         this.nextView("myapp-readview", {itemobj});
-
-
     }
 
     /*
@@ -198,7 +199,8 @@ export default class ListviewViewController extends mwf.ViewController {
         //item.update().then(() => this.updateInListview(item._id, item));
 
 
-        this.itemToBeEdited = {title: item.title, src: item.src, remote: item.remote}; // {... item}this is used in the app html to bind the item to be edited to the dialog
+        this.itemToBeEdited = {title: item.title, src: item.src, remote: item.remote}; // {... item} this is used in the app html to bind the item to be edited to the dialog
+
         this.showDialog("myapp-mediaitem-dialog", {
             itemToBeEdited: item,
             actionBindings:{
@@ -206,6 +208,7 @@ export default class ListviewViewController extends mwf.ViewController {
                     //console.log("evt", evt);
                     evt.original.preventDefault(); // prevent the default form submit action. mit diesen (prevent the default verhalten) , das Submit-Button nicht die Seite neu laden und das Summit weird nicht ins url addresse hinzugefugen
                     //alert("submitting: " + item.title);
+
                     this.hideDialog(true);
 
                     item.update().then(() => {
@@ -235,6 +238,7 @@ export default class ListviewViewController extends mwf.ViewController {
             }
         });
     }
+
 
     async onresume() {
         entities.MediaItem.readAll().then(items => this.initialiseListview(items));

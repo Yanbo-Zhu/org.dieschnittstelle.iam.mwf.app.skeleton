@@ -79,6 +79,8 @@ mwf-view-initial is the sign where the application starts. It is the first view 
         <header>
             <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
             <h1 class="mwf-left-align">{{item.title}} {{item._id}}</h1>
+
+            <!-- on-click="deleteItem" is a function in ReadviewViewController.js. It will be called when the button is clicked. -->
             <button on-click="deleteItem"  class="mwf-imgbutton mwf-img-delete mwf-right-align"></button>
         </header>
 
@@ -87,6 +89,7 @@ mwf-view-initial is the sign where the application starts. It is the first view 
         </main>
 
         <footer>
+            <!--mwf-back class: With this class, this button will go back to the previous view, which is the listview in this case.-->
             <button class="mwf-imgbutton mwf-img-backward mwf-left-align mwf-back"></button>
         </footer>
 
@@ -109,7 +112,8 @@ mwf-view-initial is the sign where the application starts. It is the first view 
 </div>
 
 <!--AddNeuItem dialog:----------------------------------------------------->
-<!--This windows will pop up after the plus button in the top bar is clicked. Imageupload is not embedded in this dialog-->
+<!--This windows will pop up after clicking the plus button in the top bar or Edit button in the Action Dialog(Edit or Delete Action).
+Image upload is not embedded in this dialog-->
 <!--It can also add those attribute into class : mwf-styling mwf-shown-->
 <div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog"  data-mwf-viewcontroller="EditDialogViewController">
     <main>
@@ -176,7 +180,8 @@ mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zei
     </header>
     <main>
         <ul>
-            <!--            mwf-menu-item is logic. mwf-li-singetitle is styling -->
+            <!-- mwf-menu-item is logic. mwf-li-singetitle is styling -->
+            <!-- data-mwf-targetaction binds the methods in ListviewViewController.js-->
             <li class="mwf-li-singletitle mwf-menu-item" data-mwf-targetaction="deleteItem">Delete</li>
             <li class="mwf-li-singletitle mwf-menu-item" data-mwf-targetaction="editItem">Edit </li>
         </ul>
