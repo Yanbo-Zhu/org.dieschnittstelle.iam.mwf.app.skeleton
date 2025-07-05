@@ -61,7 +61,7 @@ mwf-view-initial is the sign where the application starts. It is the first view 
                     <h2>{{title}} {{_id}}</h2>
                     <h3>{{addedDateString}}</h3>
                 </div>
-<!--                mwf-listitem-menu-control  call the dialog which is given in data-mwf-listitem-menu="myapp-mediaItemMenu"-->
+                <!--  mwf-listitem-menu-control  call the dialog which is given in data-mwf-listitem-menu="myapp-mediaItemMenu"-->
                 <button class="mwf-imgbutton mwf-img-options-vertical mwf-right-align mwf-listitem-menu-control"></button>
             </li>
         </ul>
@@ -130,7 +130,8 @@ Image upload is not embedded in this dialog-->
             <div class="mwf-buttonbar">
                 <button type="button" on-click="deleteEditedItem" disabled="{{#if !itemToBeEdited.created}}disabled{{/if}}" class="mwf-button mwf-left-align">Löschen</button>
 
-                <!--nachdem Submit button klicken:  get request aufgebaut. Browser baut den get request auf und liest the input paramter.  Ausgelesenen Input Felder als Bestandteil eines Querry Strings hinten an die URL ran. das ist dann die neue URL dieser Browser.  Der Browser schickt den Request an den Server,  von dem die das html-Dokument geladen wurde, welches das Formular darstellt. -->
+                <!--Nachdem Submit button klicken:
+                1. Get request aufgebaut. Browser baut den get request auf und liest the input parameter. Ausgelesenen Input Felder als Bestandteil eines Querry Strings hinten an die URL ran. Das ist dann die neue URL dieser Browser.  Der Browser schickt den Request an den Server, von dem die das html-Dokument geladen wurde, welches das Formular darstellt. -->
                 <!-- du aber ein neues würde zum Server neues Dokument ausgeliefert -->
                 <input class="mwf-button mw-button-prio mwf-right-align" type="submit" value="{{#if itemToBeEdited.created}}AKTUALISIEREN{{else}}Hinzufügen{{/if}}"/>
             </div>

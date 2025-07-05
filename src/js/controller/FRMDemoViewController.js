@@ -5,7 +5,6 @@ import {mwf} from "vfh-iam-mwf-base";
 import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
 import {LocalFileSystemReferenceHandler} from "../model/LocalFileSystemReferenceHandler";
-
 import ExifReader from "exifreader"; // import the exifreader library to read EXIF data from images
 
 export default class FRMDemoViewController extends mwf.ViewController {
@@ -19,15 +18,12 @@ export default class FRMDemoViewController extends mwf.ViewController {
      * for any view: initialise the view
      */
     async oncreate() {
-
         await super.oncreate();
-
     }
 
     async onresume() {
 
         await super.onresume();
-
         console.log("ExifReader: ", ExifReader);
 
         //const myItem = new entities.MediaItem("lirem", "https://picsum.photos/200/100");
@@ -38,10 +34,19 @@ export default class FRMDemoViewController extends mwf.ViewController {
         const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
 
         // TODO: do databinding, set listeners, initialise the view
-        this.viewProxy = this.bindElement("myapp-frm-demo-template", {item:myItem}, this.root).viewProxy;
+        /*
+         * bindElement(elementid, data, parent)
+         * bind a view element to some data - elementid might either be an element or a template - this function will be used by subclasses, e.g. for instantiating forms
+
+         * in {item: myItem, }, the item ist self-defined name. Example: if we set { XYZ: myItem}. Then, in app.html, it should use {{XYZ.title}} and {{XYZ.src}} in template  myapp-readview-template
+         */
+        this.viewProxy = this.bindElement("myapp-frm-demo-template", {item: myItem}, this.root).viewProxy;
 
         this.viewProxy.bindAction("submitForm", async (evt) => {
-            evt.original.preventDefault(); // prevent the default form submit action, so that the page does not reload
+
+            // prevent the default form submit action. mit diesen (prevent the default verhalten) , das Submit-Button nicht die Seite neu laden und das Summit wird nicht ins url addresse hinzugefugen
+            // prevent the default form submit action, so that the page does not reload
+            evt.original.preventDefault();
             //const formData = this.viewProxy.getFormData();
             //console.log("formData: ", formData);
             alert("onsubmit! Remote: " + myItem.remote);
