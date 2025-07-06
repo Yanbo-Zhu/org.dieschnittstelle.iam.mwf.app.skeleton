@@ -34,6 +34,7 @@ export default class ListviewViewController extends mwf.ViewController {
         addNewItemAction.onclick = () => {
 
             // TODO: add always the same item. Create a random generator for the title and src
+            // newItem is an instance of MediaItem class in Entity manager (../model/MyEntities.js)
             const newItem = new entities.MediaItem("", "https://picsum.photos/300/300");
 
 
@@ -47,7 +48,7 @@ export default class ListviewViewController extends mwf.ViewController {
 
             this.showDialog("myapp-mediaitem-dialog", {
 
-                // itemToBeEdited : this name be used  in app html. the name n the app html should be same as the name here
+                // itemToBeEdited : this name be already used in app.html. the name in the app html should be also same as the name here
                 itemToBeEdited: newItem,
                 actionBindings:{
 
@@ -55,7 +56,7 @@ export default class ListviewViewController extends mwf.ViewController {
                     // newItem.title is alway same to the input value you input in form in the input "title"
                     submitEditForm: (evt) => {
                         console.log("evt", evt);
-                        evt.original.preventDefault(); // prevent the default form submit action. mit diesen , das Submit-Button nicht die Seite neu laden und das Summit wird nicht ins url addresse hinzugefugen
+                        evt.original.preventDefault(); // prevent the default form submit action. mit diesen , das Submit-Button nicht die Seite neu laden und das Submit wird nicht ins url addresse hinzugefugen
                         //alert("submitting: " + newItem.title);
                         this.hideDialog();
 
@@ -82,6 +83,9 @@ export default class ListviewViewController extends mwf.ViewController {
                     const currentMediaItem = allitems[i];
 
                     if (currentMediaItem.src) {
+                        // if the src is a local file system reference, resolve it to an object url
+                        // in plus button in ListviewViewController.js: newItem.src = :https://picsum.photos/300/300"
+                        // in FRMDemoViewControl.js: myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile); it returns a url in local file system: fsPrefix + filename; e.g. opfs://myapp_data/myfile.jpg. filename = myItem.imgFile.name.replaceAll(" ","_");
                         currentMediaItem.src = await fsHandler.resolveLocalFileSystemReference(currentMediaItem.src);
                     }
                 }
@@ -139,7 +143,8 @@ export default class ListviewViewController extends mwf.ViewController {
     // }
 
     /*
-     * for views with listviews: react to the selection of a listitem
+     * for views with listviews: react to the selection of a listitem.
+     * This method is called when a list item is selected, e.g. by clicking on it. It is used to display the details of the selected item in a read view.
      * TODO: delete if no listview is used or if item selection is specified by targetview/targetaction
      */
     onListItemSelected(itemobj, listviewid) {
@@ -154,7 +159,7 @@ export default class ListviewViewController extends mwf.ViewController {
 
     /*
      * for views with listviews: react to the selection of a listitem menu option
-     * by delete and edit actions wird diese method aufgerufen.
+     * by delete and edit actions Dialog is displayed
      * TODO: delete if no listview is used or if item selection is specified by targetview/targetaction
      */
     onListItemMenuItemSelected(menuitemview, itemobj, listview) {
@@ -244,7 +249,6 @@ export default class ListviewViewController extends mwf.ViewController {
         entities.MediaItem.readAll().then(items => this.initialiseListview(items));
         super.onresume();
         //super.resume();
-
     }
 
     async hideDialog(fromSubmit) {
