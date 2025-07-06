@@ -56,6 +56,10 @@ export default class ListviewViewController extends mwf.ViewController {
                     // newItem.title is alway same to the input value you input in form in the input "title"
                     submitEditForm: (evt) => {
                         console.log("evt", evt);
+
+                        // In many UI frameworks or libraries (like MontiWUi, Meteor, or some custom frameworks), the evt parameter is not the raw browser event. Instead, it's a wrapped or custom event object provided by the framework.
+                        //evt.original refers to the original native DOM event (like a regular MouseEvent or SubmitEvent from the browser).
+                        //So evt.original.preventDefault() calls the native preventDefault() method to stop the form from doing its default behavior — like reloading the page or submitting via URL.
                         evt.original.preventDefault(); // prevent the default form submit action. mit diesen , das Submit-Button nicht die Seite neu laden und das Submit wird nicht ins url addresse hinzugefugen
                         //alert("submitting: " + newItem.title);
                         this.hideDialog();

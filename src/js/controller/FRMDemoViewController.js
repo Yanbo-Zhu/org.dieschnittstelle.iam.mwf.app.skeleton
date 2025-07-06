@@ -42,6 +42,7 @@ export default class FRMDemoViewController extends mwf.ViewController {
          */
         this.viewProxy = this.bindElement("myapp-frm-demo-template", {item: myItem}, this.root).viewProxy;
 
+        // der Zugriff auf event.orginal ist nur möglich, wenn es sich bei dem Event um ein Event handelt, das über Ractive Action Binding in den Templates gehandhabt wird.
         this.viewProxy.bindAction("submitForm",
             async (evt) => {
 
