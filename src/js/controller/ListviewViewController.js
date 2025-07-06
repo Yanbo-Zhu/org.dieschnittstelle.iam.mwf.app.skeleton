@@ -17,6 +17,23 @@ export default class ListviewViewController extends mwf.ViewController {
     // TODO-REPEATED: declare custom instance attributes for this controller
     items;
 
+
+    constructor() {
+        console.log("The constructor of ListviewViewController() was called");
+
+        super();
+        this.crudops = GenericCRUDImplLocal.newInstance("MediaItem");
+
+
+        // this.items = [
+        //     new entities.MediaItem("lirem", "https://picsum.photos/100/100"),
+        //     new entities.MediaItem("ipsum", "https://picsum.photos/200/100"),
+        //     new entities.MediaItem("olor", "https://picsum.photos/100/200"),
+        //     new entities.MediaItem("sed", "https://picsum.photos/150/300"),
+        //     new entities.MediaItem("adipiscing", "https://picsum.photos/300/150"),
+        // ];
+    }
+
     /*
      * for any view: initialise the view
      */
@@ -35,7 +52,8 @@ export default class ListviewViewController extends mwf.ViewController {
 
             // TODO: add always the same item. Create a random generator for the title and src
             // newItem is an instance of MediaItem class in Entity manager (../model/MyEntities.js)
-            const newItem = new entities.MediaItem("", "https://picsum.photos/300/300");
+            //const newItem = new entities.MediaItem("", "https://picsum.photos/300/300");
+            const newItem = new entities.MediaItem("", "", createId());
 
 
             // //alert("adding: " + newItem.addedDateString)
@@ -46,9 +64,11 @@ export default class ListviewViewController extends mwf.ViewController {
             //
             // newItem.create().then(() => this.addToListview(newItem));
 
-            this.showDialog("myapp-mediaitem-dialog", {
+            this.showDialog("myapp-mediaitem-dialog-new", {
 
+                // verweise itemToBeEdited auf newItem.  make itemToBeEdited refer to newItem
                 // itemToBeEdited : this name be already used in app.html. the name in the app html should be also same as the name here
+                // newItem is an instance of MediaItem class in Entity manager (../model/MyEntities.js)/  newItem
                 itemToBeEdited: newItem,
                 actionBindings:{
 
@@ -64,7 +84,9 @@ export default class ListviewViewController extends mwf.ViewController {
                         //alert("submitting: " + newItem.title);
                         this.hideDialog();
 
-                        newItem.create().then(() => this.addToListview(newItem));
+                        // newItem.create().then(() => this.addToListview(newItem));
+
+                        console.log("YZH");
 
                     }
                 }
@@ -104,22 +126,17 @@ export default class ListviewViewController extends mwf.ViewController {
         super.oncreate();
     }
 
+    async onresume() {
 
-    constructor() {
-        console.log("The constructor of ListviewViewController() was called");
+        console.log("ListviewViewController.onresume() has been called");
 
-        super();
-        this.crudops = GenericCRUDImplLocal.newInstance("MediaItem");
+        entities.MediaItem.readAll().then(items => this.initialiseListview(items));
 
-
-        // this.items = [
-        //     new entities.MediaItem("lirem", "https://picsum.photos/100/100"),
-        //     new entities.MediaItem("ipsum", "https://picsum.photos/200/100"),
-        //     new entities.MediaItem("olor", "https://picsum.photos/100/200"),
-        //     new entities.MediaItem("sed", "https://picsum.photos/150/300"),
-        //     new entities.MediaItem("adipiscing", "https://picsum.photos/300/150"),
-        // ];
+        super.onresume();
+        //super.resume();
     }
+
+
 
     /*
      * for views that initiate transitions to other views
@@ -210,7 +227,7 @@ export default class ListviewViewController extends mwf.ViewController {
 
         this.itemToBeEdited = {title: item.title, src: item.src, remote: item.remote}; // {... item} this is used in the app html to bind the item to be edited to the dialog
 
-        this.showDialog("myapp-mediaitem-dialog", {
+        this.showDialog("myapp-mediaitem-dialog-new", {
             itemToBeEdited: item,
             actionBindings:{
                 submitEditForm: (evt) => {
@@ -249,11 +266,7 @@ export default class ListviewViewController extends mwf.ViewController {
     }
 
 
-    async onresume() {
-        entities.MediaItem.readAll().then(items => this.initialiseListview(items));
-        super.onresume();
-        //super.resume();
-    }
+
 
     async hideDialog(fromSubmit) {
 

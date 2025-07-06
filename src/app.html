@@ -111,6 +111,54 @@ mwf-view-initial is the sign where the application starts. It is the first view 
     <footer></footer>
 </div>
 
+
+<!--AddNeuItem dialog New:---------------------------------------------->
+<!--This windows will pop up after clicking the plus button in the top bar or Edit button in the Action Dialog(Edit or Delete Action). Image upload is  embedded in this dialog-->
+<!--It can also add those attribute into class : mwf-styling mwf-shown mwf-databind-->
+<!--id="myapp-editdialog"-->
+<div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog-new"  data-mwf-viewcontroller="EditDialogViewControllerNew">
+    <main>
+        <h2>{{#if itemToBeEdited.created}}update: {{itemToBeEdited.title}}. MEDIUM AKTUALISIEREN{{else}}Neues Medium{{/if}}</h2>
+        <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
+        <!--  <form onsubmit="confirm('Submit?') ?  console.log('submit') : event.preventDefault(); " >-->
+        <!-- Default behaviour of a form is to submit the form (redirect to a new url address with the input value from form (input value was added into url addresse ) and reload the page.  But we want to prevent this behaviour (page reload), so we use event.preventDefault() -->
+        <!-- <form onsubmit=" confirm('Submit?') ? console.log('submit', event) : event.preventDefault();">-->
+        <!--  on + submit: wenn submit action ausgelost-->
+        <!--        id="myapp-frm-editdialog-form"-->
+        <form id="myapp-frm-editdialog-form" on-submit="submitEditForm">
+            <fieldset class="mwf-material">
+                <legend>Title</legend>
+                <!--  {itemToBeEdited: {title: "...", src: "..."}} placeholder="Titel"   required="required" -->
+                <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" name="title" value="{{itemToBeEdited.title}}"required="required"/>
+<!--                <div id="title-error" style="color: red; display: none;">Titel Eingabe and Bild Auswahl erforderlich</div>-->
+
+                <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-editdialog-form-fileinput" required="required"/>
+                <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera" for="myapp-frm-editdialog-form-fileinput"></label>
+<!--                <div id="file-error" style="color: red; display: none;">Bild: Auswahl erforderlich</div>-->
+            </fieldset>
+
+            <label class="remote-upload-label">
+                <span>remote&nbsp;upload&nbsp;(checkbox&nbsp;{{#if itemToBeEdited.created}}disable{{else}}enabled{{/if}})</span>
+                <input type="checkbox" checked="{{itemToBeEdited.remote}}" disabled="{{#if itemToBeEdited.created}}disabled{{/if}}"/>
+            </label>
+
+            <div>
+                <img src="{{itemToBeEdited.src}}"/>
+            </div>
+
+            <div class="mwf-buttonbar">
+                <button type="button" on-click="deleteEditedItem" disabled="{{#if !itemToBeEdited.created}}disabled{{/if}}" class="mwf-button mwf-left-align">Löschen</button>
+
+                <!--Nachdem Submit button klicken:
+                1. Get request aufgebaut. Browser baut den get request auf und liest the input parameter. Ausgelesenen Input Felder als Bestandteil eines Querry Strings hinten an die URL ran. Das ist dann die neue URL dieser Browser.  Der Browser schickt den Request an den Server, von dem die das html-Dokument geladen wurde, welches das Formular darstellt. -->
+                <!-- du aber ein neues würde zum Server neues Dokument ausgeliefert -->
+                <input class="mwf-button mw-button-prio mwf-right-align" type="submit" value="{{#if itemToBeEdited.created}}AKTUALISIEREN{{else}}Hinzufügen{{/if}}"/>
+            </div>
+        </form>
+    </main>
+</div>
+
+
 <!--AddNeuItem dialog:----------------------------------------------------->
 <!--This windows will pop up after clicking the plus button in the top bar or Edit button in the Action Dialog(Edit or Delete Action).
 Image upload is not embedded in this dialog-->

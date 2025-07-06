@@ -4,15 +4,19 @@
 import {mwf} from "vfh-iam-mwf-base";
 import {mwfUtils} from "vfh-iam-mwf-base";
 import * as entities from "../model/MyEntities.js";
+import {GenericDialogTemplateViewController} from "vfh-iam-mwf-base";
 import {LocalFileSystemReferenceHandler} from "../model/LocalFileSystemReferenceHandler";
 import ExifReader from "exifreader"; // import the exifreader library to read EXIF data from images
 
-export default class FRMDemoViewController extends mwf.ViewController {
-
+export default class EditDialogViewControllerNew extends GenericDialogTemplateViewController {
     // instance attributes set by mwf after instantiation
     args;
     root;
-    // TODO-REPEATED: declare custom instance attributes for this controller
+
+    constructor() {
+        super();
+        console.log("Edit DialogViewControllerNew");
+    }
 
     /*
      * for any view: initialise the view
@@ -22,13 +26,29 @@ export default class FRMDemoViewController extends mwf.ViewController {
     }
 
     async onresume() {
-
         await super.onresume();
-        console.log("ExifReader: ", ExifReader);
+        console.log("EditDialogViewController.onresume(): ");
+        console.log("viewProxy: ", this.root.viewProxy);
+        console.log("root: ", this.root);
+        console.log("args: ", this.args);
+
+
+        // this.root.viewProxy.bindAction("onTextInputCompleted",
+        //     async (evt) => {
+        //         alert("on Text Input Completed: " + evt.original.target.value);
+        //     }
+        // );
+
+        // this.root.querySelector("input[type='text']").onblur = (evt) => {
+        //     //alert("on Text Input Completed");
+        //     this.root.querySelector("h2").textContent = "Modified Title";
+        // }
+
 
         //const myItem = new entities.MediaItem("lirem", "https://picsum.photos/200/100");
 
-        const myItem = new entities.MediaItem("lirem");
+        //const myItem = new entities.MediaItem("lirem");
+        const myItem = new entities.MediaItem();
         //myItem.remote = true; // set a flag to indicate that this item is remote, so that it can be handled differently in the view
 
         const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
@@ -40,10 +60,10 @@ export default class FRMDemoViewController extends mwf.ViewController {
 
          * in {item: myItem, }, the item ist self-defined name. Example: if we set { XYZ: myItem}. Then, in app.html, it should use {{XYZ.title}} and {{XYZ.src}} in template  myapp-readview-template
          */
-        this.viewProxy = this.bindElement("myapp-frm-demo-template", {item: myItem}, this.root).viewProxy;
+        this.viewProxy = this.bindElement("myapp-mediaitem-dialog-new", {itemToBeEdited: myItem}, this.root).viewProxy;
 
         // der Zugriff auf event.orginal ist nur möglich, wenn es sich bei dem Event um ein Event handelt, das über Ractive Action Binding in den Templates gehandhabt wird.
-        this.viewProxy.bindAction("submitForm",
+        this.viewProxy.bindAction("submitEditForm",
             async (evt) => {
 
                 // prevent the default form submit action. mit diesen (prevent the default verhalten) , das Submit-Button nicht die Seite neu laden und das Summit wird nicht ins url addresse hinzugefugen
@@ -51,45 +71,44 @@ export default class FRMDemoViewController extends mwf.ViewController {
                 evt.original.preventDefault();
                 //const formData = this.viewProxy.getFormData();
                 //console.log("formData: ", formData);
-                alert("onsubmit! Remote upload checkbox: " + myItem.remote);
+                console.log("onsubmit! Remote upload checkbox: " + myItem.remote);
 
-                // check if the form is valid, e.g. if the title is not empty and a file is selected
-                const form = evt.original.target;
-                const titleInput = form.querySelector('input[name="title"]');
-                const fileInput = form.querySelector('#myapp-frm-editdialog-form-fileinput');
-                const titleError = form.querySelector('#title-error');
-                const fileError = form.querySelector('#file-error');
+                // // check if the form is valid, e.g. if the title is not empty and a file is selected
+                // const form = evt.original.target;
+                // const titleInput = form.querySelector('input[name="title"]');
+                // const fileInput = form.querySelector('#myapp-frm-editdialog-form-fileinput');
+                // const titleError = form.querySelector('#title-error');
+                // const fileError = form.querySelector('#file-error');
+                //
+                // let valid = true;
+                //
+                // // check if the title input is empty
+                // if (!titleInput.value.trim()) {
+                //     titleError.style.display = "block";
+                //     valid = false;
+                // } else {
+                //     titleError.style.display = "none";
+                // }
+                //
+                // // // Check if a file is selected
+                // // if (!fileInput.files || fileInput.files.length === 0) {
+                // //     fileError.style.display = "block";
+                // //     valid = false;
+                // // } else {
+                // //     fileError.style.display = "none";
+                // // }
+                //
+                // if (!valid) {
+                //     return; // don't proceed if the form is not valid, do not submit the form
+                // }
 
-                let valid = true;
-
-                // check if the title input is empty
-                if (!titleInput.value.trim()) {
-                    titleError.style.display = "block";
-                    valid = false;
-                } else {
-                    titleError.style.display = "none";
-                }
-
-                // Check if a file is selected
-                if (!fileInput.files || fileInput.files.length === 0) {
-                    fileError.style.display = "block";
-                    valid = false;
-                } else {
-                    fileError.style.display = "none";
-                }
-
-                if (!valid) {
-                    return; // 不符合条件，不提交
-                }
-
-
-                if(myItem.remote) {
+                if (myItem.remote) {
                     // if the item is remote, we can upload it to a server
                     const uploaddata = new FormData();
                     uploaddata.append("imgdata", myItem.imgFile); // append the file to the form data, so that it can be uploaded
                     uploaddata.append("anotherField", "some value"); // append another field to the form data, if needed
 
-                    const request  = new XMLHttpRequest();
+                    const request = new XMLHttpRequest();
                     request.open("POST", "http://localhost:7077/api/upload", true); // true = async
 
                     // Fire the request. Send is a void method, it does not return value
@@ -119,16 +138,18 @@ export default class FRMDemoViewController extends mwf.ViewController {
                         console.log("myItem ", myItem);
 
                         // TODO: save item  in the in local DB or another system.
-                        // myItem is an already created instance/object of the MediaItem entity class, which is registered with the EntityManager.
                         // create() method defined on an entity object, which is part of a custom entity management framework (likely for client-side persistence, maybe using IndexedDB or a custom JS-based ORM).
                         // This method creates an entity instance and persists it (e.g., to local storage or a backend) using em.create(...), while also handling inverse (bidirectional) relationships.
                         // 1) Checks for inverse relationships (via prepareInverseOperations()). 2) Calls the entity manager em.create() to persist the entity. 3) Handles any necessary inverse updates (handleInverseOperations()).  4) Supports both: Callback-style and Promise-style (i.e., await entity.create() is valid)
                         myItem.create().then(() => {
-                            alert("created reomotely!");
+                            alert("created and save in a remote server!");
                         });
                     }
 
                 } else {
+
+                    console.log("myItem.imgFile: ", myItem.imgFile);
+
                     // if the item is not wanted to be saved remotely, store it in the local file system
                     if (myItem.imgFile) {
 
@@ -141,11 +162,12 @@ export default class FRMDemoViewController extends mwf.ViewController {
                         delete myItem.imgFile; // remove the file from the item, so that it is not stored in the IndexDB database. Deletes the imgFile property to avoid saving the actual file into IndexedDB.
                     }
 
-                    // TODO: ??
                     myItem.create().then(() => {
-                        alert("created!");
+                        alert("created and saved locally!");
                     });
                 }
+
+                //
             }
         );
 
@@ -156,6 +178,8 @@ export default class FRMDemoViewController extends mwf.ViewController {
                     console.log("fileSelected: ", evt.original.target, evt.original.target.files[0]);
 
                     const imgFile = evt.original.target.files[0];
+
+                    console.log("imgFile: ", imgFile);
 
                     // const fileReader = new FileReader();
                     // fileReader.readAsDataURL(evt.original.target.files[0]);
@@ -172,11 +196,11 @@ export default class FRMDemoViewController extends mwf.ViewController {
                     //     });
                     // }
 
-
                     myItem.src = URL.createObjectURL(imgFile);
+                    myItem.title = imgFile.name.replace(/\.[^/.]+$/, ''); // set the title of the item to the name of the file. Without the file extension
 
                     // update the view with the new item data. will update the img src in the view. With that, the image is displayed in the view
-                    this.viewProxy.update({item: myItem});
+                    this.viewProxy.update({itemToBeEdited: myItem});
 
                     // imgFile is the file that was selected in the file input field, imgFile is a File object, not a string, not a URL.
                     myItem.imgFile = imgFile;
@@ -194,62 +218,22 @@ export default class FRMDemoViewController extends mwf.ViewController {
 
                     // read the EXIF metadata from the image file
                     const imgMetadata = await ExifReader.load(imgFile);
-                    console.log("imgMetadata:" + imgMetadata);
+                    console.log("imgMetadata: " + imgMetadata);
                 }
             }
         );
-
-        // call the superclass once creation is done
-        //super.oncreate();
     }
 
 
-    constructor() {
-        super();
-        console.log("FRMDemoViewController()");
-    }
-
-    /*
-     * for views that initiate transitions to other views
-     * NOTE: return false if the view shall not be returned to, e.g. because we immediately want to display its previous view. Otherwise, do not return anything.
-     */
-    async onReturnFromNextView(nextviewid, returnValue, returnStatus) {
-        // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
-    }
-
-    /*
-     * for views with listviews: bind a list item to an item view
-     * TODO: delete if no listview is used or if databinding uses ractive templates
-     */
-    bindListItemView(listviewid, itemview, itemobj) {
-        // TODO: implement how attributes of itemobj shall be displayed in itemview
-    }
-
-    /*
-     * for views with listviews: react to the selection of a listitem
-     * TODO: delete if no listview is used or if item selection is specified by targetview/targetaction
-     */
-    onListItemSelected(itemobj, listviewid) {
-        // TODO: implement how selection of itemobj shall be handled
-    }
-
-    /*
-     * for views with listviews: react to the selection of a listitem menu option
-     * TODO: delete if no listview is used or if item selection is specified by targetview/targetaction
-     */
-    onListItemMenuItemSelected(menuitemview, itemobj, listview) {
-        // TODO: implement how selection of the option menuitemview for itemobj shall be handled
-    }
-
-    /*
-     * for views with dialogs
-     * TODO: delete if no dialogs are used or if generic controller for dialogs is employed
-     */
-    bindDialog(dialogid, dialogview, dialogdataobj) {
-        // call the supertype function
-        super.bindDialog(dialogid, dialogview, dialogdataobj);
-
-        // TODO: implement action bindings for dialog, accessing dialog.root
-    }
+    // async onpause() {
+    //     await super.onpause();
+    //     alert("EditDialogViewController::onpause() ", this );
+    // }
+    //
+    // async hidedialog() {
+    //     await super.hidedialog();
+    //     console.log("hideDialog() called");
+    //
+    // }
 
 }
