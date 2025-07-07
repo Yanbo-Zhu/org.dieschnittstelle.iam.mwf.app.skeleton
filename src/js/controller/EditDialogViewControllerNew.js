@@ -23,6 +23,15 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
      */
     async oncreate() {
         await super.oncreate();
+
+        console.log("EditDialogViewController.oncreate(): ");
+        console.log("viewProxy: ", this.root.viewProxy);
+        console.log("root: ", this.root);
+        console.log("args: ", this.args);
+
+        // // TODO: do databinding, set listeners, initialise the view
+        // this.myItem = this.args?.myItem || new entities.MediaItem("", "");
+        // console.log("EditDialogViewController.oncreate() myItem: ", this.myItem);
     }
 
     async onresume() {
@@ -48,8 +57,15 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
         //const myItem = new entities.MediaItem("lirem", "https://picsum.photos/200/100");
 
         //const myItem = new entities.MediaItem("lirem");
-        const myItem = new entities.MediaItem();
         //myItem.remote = true; // set a flag to indicate that this item is remote, so that it can be handled differently in the view
+
+
+
+        // const myItem = new entities.MediaItem("", "");
+        //console.log("ditDialogViewController.onresume(): this.args: ", this.args);
+        const myItem = this.args?.itemToBeEdited || new entities.MediaItem("", "");
+        console.log("ditDialogViewController.onresume(): myItem: ", myItem);
+
 
         const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
 
@@ -61,6 +77,7 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
          * in {item: myItem, }, the item ist self-defined name. Example: if we set { XYZ: myItem}. Then, in app.html, it should use {{XYZ.title}} and {{XYZ.src}} in template  myapp-readview-template
          */
         this.viewProxy = this.bindElement("myapp-mediaitem-dialog-new", {itemToBeEdited: myItem}, this.root).viewProxy;
+
 
         // der Zugriff auf event.orginal ist nur möglich, wenn es sich bei dem Event um ein Event handelt, das über Ractive Action Binding in den Templates gehandhabt wird.
         this.viewProxy.bindAction("submitEditForm",
@@ -141,9 +158,10 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
                         // create() method defined on an entity object, which is part of a custom entity management framework (likely for client-side persistence, maybe using IndexedDB or a custom JS-based ORM).
                         // This method creates an entity instance and persists it (e.g., to local storage or a backend) using em.create(...), while also handling inverse (bidirectional) relationships.
                         // 1) Checks for inverse relationships (via prepareInverseOperations()). 2) Calls the entity manager em.create() to persist the entity. 3) Handles any necessary inverse updates (handleInverseOperations()).  4) Supports both: Callback-style and Promise-style (i.e., await entity.create() is valid)
-                        myItem.create().then(() => {
-                            alert("created and save in a remote server!");
-                        });
+                        // myItem.create().then(() => {
+                        //     alert("created and save in a remote server!");
+                        // });
+                        this.updateOrCreateItem(myItem); // update or create the item in the remote server
                     }
 
                 } else {
@@ -158,16 +176,17 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
                         // It's input is filedata(myItem.imgFile)
                         // it returns a url in local file system: fsPrefix + filename; e.g. opfs://myapp_data/myfile.jpg. filename = myItem.imgFile.name.replaceAll(" ","_");
                         myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile);
-                        console.log("myItem.src: ", myItem.src);
+                        console.log("EditviewViewController myItem.src: ", myItem.src);
                         delete myItem.imgFile; // remove the file from the item, so that it is not stored in the IndexDB database. Deletes the imgFile property to avoid saving the actual file into IndexedDB.
                     }
 
-                    myItem.create().then(() => {
-                        alert("created and saved locally!");
-                    });
+                    this.updateOrCreateItem(myItem); // update or create the item in the local file system
+
+                    // myItem.create().then(() => {
+                    //     alert("created and saved locally!");
+                    // });
                 }
 
-                //
             }
         );
 
@@ -197,7 +216,11 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
                     // }
 
                     myItem.src = URL.createObjectURL(imgFile);
-                    myItem.title = imgFile.name.replace(/\.[^/.]+$/, ''); // set the title of the item to the name of the file. Without the file extension
+
+                    if (!myItem.title || myItem.title === "") {
+                        myItem.title = imgFile.name.replace(/\.[^/.]+$/, ''); // set the title of the item to the name of the file. Without the file extension
+                    }
+
 
                     // update the view with the new item data. will update the img src in the view. With that, the image is displayed in the view
                     this.viewProxy.update({itemToBeEdited: myItem});
@@ -222,6 +245,19 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
                 }
             }
         );
+    }
+
+    updateOrCreateItem(item) {
+        if (item.created) {
+            item.update().then(() => {
+
+            });
+        }
+        else {
+            item.create().then(() => {
+
+            });
+        }
     }
 
 

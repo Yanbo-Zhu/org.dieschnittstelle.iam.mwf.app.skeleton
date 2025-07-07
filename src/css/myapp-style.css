@@ -29,15 +29,25 @@
     opacity: 1;
 }
 
-#myapp-frm-editdialog-form div {
-    text-align: center;
+#myapp-frm-editdialog-form .image-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*border: 1px solid #ccc;*/
+
+    /* ?????? */
+    margin: 1em auto; /* ???? + ???? */
 }
 
-#myapp-frm-editdialog-form div img {
+#myapp-frm-editdialog-form .image-container img {
+    max-width: 95%;         /* ??????????? */
+    height: 95%;            /* ???????? */
+    object-fit: contain;     /* ????? */
+    display: block;
     margin: 1em auto;
-    width: 60%;
-    height: auto;
-    display: block; /* importan: make margin auto valid */
 }
 
 #myapp-frm-editdialog-form .remote-upload-label {

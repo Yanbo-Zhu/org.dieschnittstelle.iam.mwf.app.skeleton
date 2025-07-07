@@ -28,12 +28,14 @@ export class MediaItem extends EntityManager.Entity {
     contentType;
     added = Date.now();
     description = "";
+    remote = "false"; // true if the item is stored remotely, false if it is stored local file system
 
-    constructor(title, src, contentType) {
+    constructor(title, src, contentType, remote) {
         super();
         this.title = title;
         this.src = src;
         this.contentType = contentType;
+        this.remote = remote;
     }
 
     get addedDateString() {

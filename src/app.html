@@ -112,13 +112,13 @@ mwf-view-initial is the sign where the application starts. It is the first view 
 </div>
 
 
-<!--AddNeuItem dialog New:---------------------------------------------->
-<!--This windows will pop up after clicking the plus button in the top bar or Edit button in the Action Dialog(Edit or Delete Action). Image upload is  embedded in this dialog-->
+<!--AddNeuItem/EditItem dialog New:------------------------------->
+<!--This windows will pop up after clicking the plus button in the top bar or Edit button in the Action Menu(Edit or Delete Action). Image upload is embedded in this dialog-->
 <!--It can also add those attribute into class : mwf-styling mwf-shown mwf-databind-->
 <!--id="myapp-editdialog"-->
 <div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog-new"  data-mwf-viewcontroller="EditDialogViewControllerNew">
     <main>
-        <h2>{{#if itemToBeEdited.created}}update: {{itemToBeEdited.title}}. MEDIUM AKTUALISIEREN{{else}}Neues Medium{{/if}}</h2>
+        <h2>{{#if itemToBeEdited.created}}Medium Aktualisieren: {{itemToBeEdited.title}} with id {{itemToBeEdited._id}} {{else}}Neues Medium{{/if}}</h2>
         <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
         <!--  <form onsubmit="confirm('Submit?') ?  console.log('submit') : event.preventDefault(); " >-->
         <!-- Default behaviour of a form is to submit the form (redirect to a new url address with the input value from form (input value was added into url addresse ) and reload the page.  But we want to prevent this behaviour (page reload), so we use event.preventDefault() -->
@@ -129,7 +129,7 @@ mwf-view-initial is the sign where the application starts. It is the first view 
             <fieldset class="mwf-material">
                 <legend>Title</legend>
                 <!--  {itemToBeEdited: {title: "...", src: "..."}} placeholder="Titel"   required="required" -->
-                <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" name="title" value="{{itemToBeEdited.title}}"required="required"/>
+                <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" name="title" value="{{itemToBeEdited.title}}" required="required"/>
 <!--                <div id="title-error" style="color: red; display: none;">Titel Eingabe and Bild Auswahl erforderlich</div>-->
 
                 <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-editdialog-form-fileinput" required="required"/>
@@ -138,11 +138,11 @@ mwf-view-initial is the sign where the application starts. It is the first view 
             </fieldset>
 
             <label class="remote-upload-label">
-                <span>remote&nbsp;upload&nbsp;(checkbox&nbsp;{{#if itemToBeEdited.created}}disable{{else}}enabled{{/if}})</span>
+                <span>remote&nbsp;upload ({{#if itemToBeEdited.created}}disable{{else}}enabled{{/if}})</span>
                 <input type="checkbox" checked="{{itemToBeEdited.remote}}" disabled="{{#if itemToBeEdited.created}}disabled{{/if}}"/>
             </label>
 
-            <div>
+            <div class="image-container">
                 <img src="{{itemToBeEdited.src}}"/>
             </div>
 
@@ -217,7 +217,7 @@ Image upload is not embedded in this dialog-->
 
 
 
-<!-- Action Dialog: Edit or Delete --------------------------------------------->
+<!-- Action Dialog/Menu: Edit or Delete --------------------------------------------->
 <!--This dialog pops up after the option button (three points icons) is clicked. Every item in the listview has this button, so that the dialog can be opened for each item in the listview-->
 <!--class = mwf-styling mwf-dialog-shown
 mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zeitraum hinweg ausgeblendet werden

@@ -44,6 +44,7 @@ export default class ListviewViewController extends mwf.ViewController {
         console.log("oncreate() root=", this.root);
         console.log("oncreate() items=", this.items);
 
+        const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
 
         // Add action after the plus button with id "myapp-addNewItem" is clicked
         const addNewItemAction = this.root.querySelector("#myapp-addNewItem");
@@ -74,19 +75,32 @@ export default class ListviewViewController extends mwf.ViewController {
 
                     // submitEditForm is the name which defined in app.html
                     // newItem.title is alway same to the input value you input in form in the input "title"
-                    submitEditForm: (evt) => {
+                    submitEditForm: async (evt) => {
                         console.log("evt", evt);
 
                         // In many UI frameworks or libraries (like MontiWUi, Meteor, or some custom frameworks), the evt parameter is not the raw browser event. Instead, it's a wrapped or custom event object provided by the framework.
                         //evt.original refers to the original native DOM event (like a regular MouseEvent or SubmitEvent from the browser).
                         //So evt.original.preventDefault() calls the native preventDefault() method to stop the form from doing its default behavior — like reloading the page or submitting via URL.
                         evt.original.preventDefault(); // prevent the default form submit action. mit diesen , das Submit-Button nicht die Seite neu laden und das Submit wird nicht ins url addresse hinzugefugen
-                        //alert("submitting: " + newItem.title);
-                        this.hideDialog();
 
+                        this.hideDialog(true);
+
+
+
+                        // newItem.src = await fsHandler.createLocalFileSystemReference(newItem.imgFile);
+                        // console.log("ListviewViewController  myItem.src: ", newItem.src);
+                        // delete newItem.imgFile;
+                        //
+                        // // TODO: addtoListview() do not contains the resolveLocalFileSystemReference() method, so the src is not an object url. The img src is still  a local file system reference, (e.g. opfs://myapp_data/myfile.jpg) und can not be displayed in the Listview properly
                         // newItem.create().then(() => this.addToListview(newItem));
 
-                        console.log("YZH");
+
+                        // newItem.create().then(() => {
+                        //     this.hideDialog();
+                        //     //this.updateInListview(item._id, item);
+                        //     newItem.create().then(() => this.addToListview(newItem));
+                        // });
+
 
                     }
                 }
@@ -95,12 +109,12 @@ export default class ListviewViewController extends mwf.ViewController {
             //this.addToListview(newItem);
         }
 
-        const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
+
 
         // read all items with typename "MediaItem" from the IndexedDB database
         entities.MediaItem.readAll().then(
             async allitems => {
-            //console.log("ListviewViewController.oncreate(): allitems=", allitems);
+                //console.log("ListviewViewController.oncreate(): allitems=", allitems);
 
                 console.log("items: ", allitems); // this.items addDateString (item.added) is undefined, weil die Daten aus der Datenbank nicht typisiert sind. weil items nicht in der Klasse MediaItem sind
 
@@ -123,16 +137,17 @@ export default class ListviewViewController extends mwf.ViewController {
         //this.initialiseListview(this.items);
 
         // call the superclass once creation is done
-        super.oncreate();
+        await super.oncreate();
     }
 
     async onresume() {
 
         console.log("ListviewViewController.onresume() has been called");
 
-        entities.MediaItem.readAll().then(items => this.initialiseListview(items));
+        // entities.MediaItem.readAll().then(items => this.initialiseListview(items));
 
-        super.onresume();
+
+        await super.onresume();
         //super.resume();
     }
 
@@ -243,7 +258,7 @@ export default class ListviewViewController extends mwf.ViewController {
                         item.update().then(() => this.updateInListview(item._id, item));
                     });
 
-                    //item.update().then(() => this.updateInListview(item._id, item));
+                    // item.update().then(() => this.updateInListview(item._id, item));
                 },
 
                 deleteEditedItem: (evt) => {
