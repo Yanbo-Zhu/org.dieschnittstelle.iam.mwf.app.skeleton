@@ -114,6 +114,8 @@ export default class ListviewViewController extends mwf.ViewController {
                 }
             })
 
+            //this.initialiseListItemsInListView(this.dataSourceScope)
+
             //this.addToListview(newItem);
         }
 
@@ -135,7 +137,7 @@ export default class ListviewViewController extends mwf.ViewController {
 
         // read all items with typename "MediaItem" from the IndexedDB database
         this.root.querySelector("footer #datenScope").innerHTML = `Data Source: ${this.dataSourceScope}`
-        this.initialiseListItemsInListView("localAndRemote")
+        this.initialiseListItemsInListView(this.dataSourceScope)
         // entities.MediaItem.readAll().then(
         //     async allitems => {
         //         //console.log("ListviewViewController.oncreate(): allitems=", allitems);
@@ -182,6 +184,15 @@ export default class ListviewViewController extends mwf.ViewController {
 
         await super.onresume();
         //super.resume();
+
+    }
+
+    // onpause(): called when the view is paused, e.g. when the user navigates to another view or closes the app
+    async onpause() {
+        console.log("ListviewViewController.onpause() has been called");
+
+        await super.onpause();
+
     }
 
 
@@ -193,7 +204,8 @@ export default class ListviewViewController extends mwf.ViewController {
     async onReturnFromNextView(nextviewid, returnValue, returnStatus) {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
 
-        console.log("onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
+        console.log("ListviewViewController onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
+        //this.initialiseListItemsInListView(this.dataSourceScope);
 
     }
 
@@ -267,6 +279,8 @@ export default class ListviewViewController extends mwf.ViewController {
             }
 
             datenScope.innerHTML = `Data Source: ${this.dataSourceScope}`;
+
+            console.log("ListviewViewController.prepareDataSourceScopeSwitch(): dataSourceScope=", this.dataSourceScope);
             this.initialiseListItemsInListView(this.dataSourceScope);
 
         }
@@ -330,17 +344,34 @@ export default class ListviewViewController extends mwf.ViewController {
 
     /* specific methods for view functionality*/
     deleteItem(item) {
-        console.log("deleteItem() item=", item);
-        //alert("deleteItem() item=" + item.title + " "  + item._id);
-
-        //this.crudops.delete(item._id).then(() => {
-        //    this.removeFromListview(item._id);
-        //});
-
-        item.delete().then(() => {
-            this.removeFromListview(item._id);
-        });
+        this.showDialog("mediaItemDeleteDialog", {
+            itemToBeEdited: item,
+            actionBindings: {
+                submitDeleteForm: ((event) => {
+                    event.original.preventDefault();
+                    this.hideDialog();
+                }),
+                deleteItem: ((event) => {
+                    item.delete().then(() => {
+                        this.removeFromListview(item._id);
+                    });
+                    this.hideDialog();
+                })
+            }
+        })
     }
+    // deleteItem(item) {
+    //     console.log("deleteItem() item=", item);
+    //     //alert("deleteItem() item=" + item.title + " "  + item._id);
+    //
+    //     //this.crudops.delete(item._id).then(() => {
+    //     //    this.removeFromListview(item._id);
+    //     //});
+    //
+    //     item.delete().then(() => {
+    //         this.removeFromListview(item._id);
+    //     });
+    // }
 
     editItem(item) {
         console.log("editItem() item=", item);

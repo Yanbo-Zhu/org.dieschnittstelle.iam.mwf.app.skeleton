@@ -102,7 +102,7 @@ mwf-view-initial is the sign where the application starts. It is the first view 
 
 
 <!-- Maps View ---------------------------------------------------->
-<div class="mwf-view" id="myapp-maps-demo" data-mwf-viewcontroller="MapsDemoViewController">
+<div class="mwf-view" id="myapp-mapview" data-mwf-viewcontroller="MapsDemoViewController">
     <header>
         <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
         <h1>Maps Demo</h1>
@@ -241,6 +241,21 @@ mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zei
     </main>
 </div>
 
+<!-- Delete Dialoge -->
+<div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component"
+     data-mwf-viewcontroller="GenericDialogTemplateViewController"
+     data-mwf-templatename="mediaItemDeleteDialog">
+    <main>
+        <h2>Medium Löschen</h2>
+        <form id="myapp-frm-deletedialog-form" on-submit="submitDeleteForm">
+            <h2>Möchten sie das Medium {{itemToBeEdited.title}} {{itemToBeEdited._id}} löschen?</h2>
+            <div class="mwf-buttonbar">
+                <input class="mwf-left-align mwf-button" type="submit" value="Abbrechen" />
+                <button class="mwf-button-prio mwf-right-align mwf-button" type="button" on-click="deleteItem">Löschen</button>
+            </div>
+        </form>
+    </main>
+</div>
 
 <!--Sidebar: For switching views ---------------------------------------------------->
 <!--data-mwf-targetview decide which view can be switched to-->
@@ -250,9 +265,9 @@ mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zei
             <div class="mwf-icon mwf-img-photo-album mwf-left-align"></div>
             <h2 class="mwf-left-align mwf-li-titleblock">Medien</h2>
         </li>
-        <li class="mwf-li-singletitle mwf-menu-item" data-mwf-id="mainmenu-maps" data-mwf-targetview="myapp-maps-demo">
+        <li class="mwf-li-singletitle mwf-menu-item" data-mwf-id="mainmenu-maps" data-mwf-targetview="myapp-mapview">
             <div class="mwf-icon mwf-img-map mwf-left-align"></div>
-            <h2 class="mwf-left-align mwf-li-titleblock">Maps Demo</h2>
+            <h2 class="mwf-left-align mwf-li-titleblock">Maps</h2>
         </li>
     </ul>
 </div>

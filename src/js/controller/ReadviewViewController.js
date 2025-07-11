@@ -47,9 +47,27 @@ export default class ReadviewViewController extends mwf.ViewController {
 
         // deleteItem is named originally in the app.html as "deleteItem"
         templateProxy.bindAction( "deleteItem", () => {
-            myItem.delete().then(() => {
-                this.previousView({item: myItem}, "itemDeleted");
-            });
+
+            this.showDialog("mediaItemDeleteDialog", {
+                itemToBeEdited: myItem,
+                actionBindings: {
+                    submitDeleteForm: ((event) => {
+                        event.original.preventDefault();
+                        this.hideDialog();
+                    }),
+                    deleteItem: ((event) => {
+                        myItem.delete().then(() => {
+                            this.hideDialog();
+                            this.previousView({itemToBeEdited: myItem}, "itemDeleted");
+                        });
+
+                    })
+                }
+            })
+
+            // myItem.delete().then(() => {
+            //     this.previousView({item: myItem}, "itemDeleted");
+            // });
 
             // const anotherItem = new entities.MediaItem("another item", "https://picsum.photos/200/100");
             // templateProxy.update({item:anotherItem});
