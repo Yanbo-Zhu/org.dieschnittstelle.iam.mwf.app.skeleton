@@ -17,12 +17,6 @@ export default class MapsDemoViewController extends mwf.ViewController {
     root;
     // TODO-REPEATED: declare custom instance attributes for this controller
 
-    /*
-     *oncreate(): initialise the view. oncreate() wird aufgerufen, wenn ein Controller erstmal instanziiert wird, also wenn die View zum ersten Mal angezeigt wird.
-     * oncreate() wird nur einmal aufgerufen, auch wenn die View mehrfach angezeigt wird.
-     * oncreate() wird nicht aufgerufen, wenn die View nur wieder angezeigt wird, nachdem sie vorher schon einmal angezeigt wurde. In diesem Fall wird onresume() aufgerufen.
-     * oncreate wird aufgerufen, wenn User den Ansicht noch nicht gesehen hat, also wenn die View zum ersten Mal angezeigt wird.
-     */
     async oncreate() {
         // TODO: do databinding, set listeners, initialise the view
         console.log("MapsDemoViewController::oncreate()");
@@ -31,11 +25,7 @@ export default class MapsDemoViewController extends mwf.ViewController {
         super.oncreate();
     }
 
-    /*
-        * Resume the view after it has been resumed. onresume() Aufgerufen wenn ein Controller wieder angezeigt wird, nachdem er vorher schon einmal angezeigt wurde.
-        * onresume() wird aufgerufen, wenn User den Ansicht schon gesehen hat,
-        * onresume() wird aufgerufen, wenn Ansicht wechseln, aber nicht neu laden will, also wenn die View schon einmal angezeigt wurde.
-     */
+
     async onresume() {
         await super.onresume();
 

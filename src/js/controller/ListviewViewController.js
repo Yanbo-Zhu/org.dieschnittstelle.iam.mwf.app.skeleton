@@ -16,6 +16,10 @@ export default class ListviewViewController extends mwf.ViewController {
     root; // the root element of the view, where the view is attached. where this class instanziated
     // TODO-REPEATED: declare custom instance attributes for this controller
     items;
+    dataSourceScope;
+
+    // fsHandler = await LocalFileSystemReferenceHandler.getInstance();
+    //
 
 
     constructor() {
@@ -23,6 +27,8 @@ export default class ListviewViewController extends mwf.ViewController {
 
         super();
         this.crudops = GenericCRUDImplLocal.newInstance("MediaItem");
+        this.dataSourceScope = "localAndRemote"; // "local" or "remote" or "localAndRemote"
+
 
 
         // this.items = [
@@ -35,7 +41,11 @@ export default class ListviewViewController extends mwf.ViewController {
     }
 
     /*
-     * for any view: initialise the view
+     *for any view: initialise the view
+     *oncreate(): initialise the view. oncreate() wird aufgerufen, wenn ein Controller erstmal instanziiert wird, also wenn die View zum ersten Mal angezeigt wird.
+     * oncreate() wird nur einmal aufgerufen, auch wenn die View mehrfach angezeigt wird.
+     * oncreate() wird nicht aufgerufen, wenn die View nur wieder angezeigt wird, nachdem sie vorher schon einmal angezeigt wurde. In diesem Fall wird onresume() aufgerufen.
+     * oncreate wird aufgerufen, wenn User den Ansicht noch nicht gesehen hat, also wenn die View zum ersten Mal angezeigt wird.
      */
     async oncreate() {
         // TODO: do databinding, set listeners, initialise the view
@@ -44,11 +54,9 @@ export default class ListviewViewController extends mwf.ViewController {
         console.log("oncreate() root=", this.root);
         console.log("oncreate() items=", this.items);
 
-        const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
 
         // Add action after the plus button with id "myapp-addNewItem" is clicked
         const addNewItemAction = this.root.querySelector("#myapp-addNewItem");
-
         addNewItemAction.onclick = () => {
 
             // TODO: add always the same item. Create a random generator for the title and src
@@ -110,29 +118,48 @@ export default class ListviewViewController extends mwf.ViewController {
         }
 
 
+        // prepare the data source scope switch
+        this.prepareDataSourceScopeSwitch();
+
+
+        // add action to the refresh button in the footer
+        //this.refreshListview()
+        const refreshButton = this.root.querySelector("footer .mwf-img-refresh")
+        refreshButton.onclick = () => {
+            //console.log("ListviewViewController.oncreate(): refresh button clicked. this.dataSourceScope): ", this.dataSourceScope);
+            this.initialiseListItemsInListView(this.dataSourceScope);
+        }
+
+
+
 
         // read all items with typename "MediaItem" from the IndexedDB database
-        entities.MediaItem.readAll().then(
-            async allitems => {
-                //console.log("ListviewViewController.oncreate(): allitems=", allitems);
-
-                console.log("items: ", allitems); // this.items addDateString (item.added) is undefined, weil die Daten aus der Datenbank nicht typisiert sind. weil items nicht in der Klasse MediaItem sind
-
-                //convert local url in local file system reference into Object URL
-                for(let i = 0; i < allitems.length; i++) {
-                    const currentMediaItem = allitems[i];
-
-                    if (currentMediaItem.src) {
-                        // if the src is a local file system reference, resolve it to an object url
-                        // in plus button in ListviewViewController.js: newItem.src = :https://picsum.photos/300/300"
-                        // in FRMDemoViewControl.js: myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile); it returns a url in local file system: fsPrefix + filename; e.g. opfs://myapp_data/myfile.jpg. filename = myItem.imgFile.name.replaceAll(" ","_");
-                        currentMediaItem.src = await fsHandler.resolveLocalFileSystemReference(currentMediaItem.src);
-                    }
-                }
-
-                this.initialiseListview(allitems);
-            }
-        );
+        this.root.querySelector("footer #datenScope").innerHTML = `Data Source: ${this.dataSourceScope}`
+        this.initialiseListItemsInListView("localAndRemote")
+        // entities.MediaItem.readAll().then(
+        //     async allitems => {
+        //         //console.log("ListviewViewController.oncreate(): allitems=", allitems);
+        //
+        //         console.log("items: ", allitems); // this.items addDateString (item.added) is undefined, weil die Daten aus der Datenbank nicht typisiert sind. weil items nicht in der Klasse MediaItem sind
+        //
+        //         //convert local url in local file system reference into Object URL
+        //         for(let i = 0; i < allitems.length; i++) {
+        //             const currentMediaItem = allitems[i];
+        //
+        //             console.log("currentMediaItem: ", currentMediaItem);
+        //
+        //
+        //             if (currentMediaItem.src) {
+        //                 // if the src is a local file system reference, resolve it to an object url
+        //                 // in plus button in ListviewViewController.js: newItem.src = :https://picsum.photos/300/300"
+        //                 // in FRMDemoViewControl.js: myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile); it returns a url in local file system: fsPrefix + filename; e.g. opfs://myapp_data/myfile.jpg. filename = myItem.imgFile.name.replaceAll(" ","_");
+        //                 currentMediaItem.src = await fsHandler.resolveLocalFileSystemReference(currentMediaItem.src);
+        //             }
+        //         }
+        //
+        //         this.initialiseListview(allitems);
+        //     }
+        // );
 
         //this.initialiseListview(this.items);
 
@@ -140,12 +167,18 @@ export default class ListviewViewController extends mwf.ViewController {
         await super.oncreate();
     }
 
+
+
+    /*
+    * Resume the view after it has been resumed. onresume() Aufgerufen wenn ein Controller wieder angezeigt wird, nachdem er vorher schon einmal angezeigt wurde.
+    * onresume() wird aufgerufen, wenn User den Ansicht schon gesehen hat,
+    * onresume() wird aufgerufen, wenn Ansicht wechseln, aber nicht neu laden will, also wenn die View schon einmal angezeigt wurde.
+     */
     async onresume() {
 
         console.log("ListviewViewController.onresume() has been called");
 
         // entities.MediaItem.readAll().then(items => this.initialiseListview(items));
-
 
         await super.onresume();
         //super.resume();
@@ -218,6 +251,83 @@ export default class ListviewViewController extends mwf.ViewController {
         // TODO: implement action bindings for dialog, accessing dialog.root
     }
 
+
+    prepareDataSourceScopeSwitch() {
+        const switchElement = this.root.querySelector("footer .mwf-img-tiles")
+        const datenScope =  this.root.querySelector("footer #datenScope")
+        switchElement.onclick = () => {
+            if (this.dataSourceScope == "localAndRemote") {
+                this.dataSourceScope = "local";
+            } else if (this.dataSourceScope == "local") {
+                this.dataSourceScope = "remote";
+            } else if (this.dataSourceScope == "remote") {
+                this.dataSourceScope = "localAndRemote";
+            } else {
+                this.dataSourceScope = "localAndRemote"; // default case
+            }
+
+            datenScope.innerHTML = `Data Source: ${this.dataSourceScope}`;
+            this.initialiseListItemsInListView(this.dataSourceScope);
+
+        }
+    }
+
+
+
+    // read all items with typename "MediaItem" from the IndexedDB database
+    async initialiseListItemsInListView(scope) {
+
+        const fsHandler = await LocalFileSystemReferenceHandler.getInstance();
+
+
+        entities.MediaItem.readAll().then(
+            async allitems => {
+                //console.log("ListviewViewController.oncreate(): allitems=", allitems);
+
+                console.log("items: ", allitems); // this.items addDateString (item.added) is undefined, weil die Daten aus der Datenbank nicht typisiert sind. weil items nicht in der Klasse MediaItem sind
+
+                let itemsInScope = [];
+
+                //convert local url in local file system reference into Object URL
+                for(let i = 0; i < allitems.length; i++) {
+                    const currentMediaItem = allitems[i];
+                    console.log("currentMediaItem: ", currentMediaItem);
+
+                    if (currentMediaItem.src) {
+                        // if the src is a local file system reference, resolve it to an object url
+                        // in plus button in ListviewViewController.js: newItem.src = :https://picsum.photos/300/300"
+                        // in FRMDemoViewControl.js: myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile); it returns a url in local file system: fsPrefix + filename; e.g. opfs://myapp_data/myfile.jpg. filename = myItem.imgFile.name.replaceAll(" ","_");
+                        currentMediaItem.src = await fsHandler.resolveLocalFileSystemReference(currentMediaItem.src);
+                    }
+
+                    const isRemote = !!currentMediaItem.remote;
+                    switch (scope) {
+                        case "localAndRemote":
+                            itemsInScope.push(currentMediaItem);
+                            break;
+                        case "remote":
+                            if (isRemote) {
+                                itemsInScope.push(currentMediaItem);
+                            }
+                            break;
+                        case "local":
+                            if (!isRemote) {
+                                itemsInScope.push(currentMediaItem);
+                            }
+                            break;
+                        default:
+                            itemsInScope.push(currentMediaItem);
+                    }
+                }
+
+                console.log("itemsInScope: ", itemsInScope);
+
+                this.initialiseListview(itemsInScope);
+            }
+        );
+    }
+
+
     /* specific methods for view functionality*/
     deleteItem(item) {
         console.log("deleteItem() item=", item);
@@ -251,6 +361,8 @@ export default class ListviewViewController extends mwf.ViewController {
                     //alert("submitting: " + item.title);
 
                     this.hideDialog(true);
+
+                    console.log("ListviewViewController.editItem(): item", item);
 
                     item.update().then(() => {
                         this.hideDialog();

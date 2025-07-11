@@ -132,16 +132,17 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
                     // send is not a Promise, so we cannot use await here
                     // through send(), a asynchronous request is sent to the server, so that the page does not reload. It takes some time until the server responds.
                     // keine response, da response noch nicht zur Verfügung steht, da die Anfrage asynchron ist.  has to be waited.
-                    const response = request.send(uploaddata);
-                    console.log("response: ", response);
+                    //const response = request.send(uploaddata);
+                    //console.log("response: ", response);
+                    request.send(uploaddata);
 
                     // through send(), a asynchronous request is sent to the server.  It takes some time until the server responds.
                     // However, we can use the onload event to handle the response. use callback method
                     // request.onload is a callback function that gets called automatically when an XMLHttpRequest completes successfully (i.e., the request was sent and a response was received from the server).
                     // request.onload() is called when the request is completed
                     request.onload = () => {
-                        alert("loaded: " + request.responseText);
-                        const responseData = JSON.parse(request.responseText);
+                        //alert("loaded: " + request.responseText);
+                        const responseData = JSON.parse(request.responseText); // parse the response text as JSON, so that we can access the data in it
                         console.log("responseData; ", responseData);
 
                         // removes the imgFile property from the myItem object after the image has been successfully uploaded to the remote server.
@@ -152,15 +153,25 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
 
                         // Update image source to remote file
                         myItem.src = "http://localhost:7077/" + responseData.data.imgdata;
-                        console.log("myItem ", myItem);
+                        myItem.img_storage_location= "remoteServer"; // set the storage location of the image to remote, so that it can be handled differently in the view
+                        myItem.contentType = responseData.data.contentType;
 
-                        // TODO: save item  in the in local DB or another system.
-                        // create() method defined on an entity object, which is part of a custom entity management framework (likely for client-side persistence, maybe using IndexedDB or a custom JS-based ORM).
-                        // This method creates an entity instance and persists it (e.g., to local storage or a backend) using em.create(...), while also handling inverse (bidirectional) relationships.
-                        // 1) Checks for inverse relationships (via prepareInverseOperations()). 2) Calls the entity manager em.create() to persist the entity. 3) Handles any necessary inverse updates (handleInverseOperations()).  4) Supports both: Callback-style and Promise-style (i.e., await entity.create() is valid)
-                        // myItem.create().then(() => {
-                        //     alert("created and save in a remote server!");
-                        // });
+
+                        // The following code do not work, because the content type is not set in the response header of the server. The server does not send the content type in the response header.
+                        // const xhreqType = new XMLHttpRequest();
+                        // const urlOfUploadedData = myItem.src
+                        // xhreqType.open("HEAD", urlOfUploadedData);
+                        // xhreqType.send();
+                        // xhreqType.onload = () => {
+                        //     const contentType = xhreqType.getResponseHeader("Content-Type");   // no any return here
+                        //     console.log("submitEditForm contentType: ", contentType);
+                        //     myItem.contentType = contentType;
+                        // }
+
+                        console.log("submitEditForm myItem ", myItem);
+
+                        // TODO: save item  in the in IndexDB.
+
                         this.updateOrCreateItem(myItem); // update or create the item in the remote server
                     }
 
@@ -176,8 +187,12 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
                         // It's input is filedata(myItem.imgFile)
                         // it returns a url in local file system: fsPrefix + filename; e.g. opfs://myapp_data/myfile.jpg. filename = myItem.imgFile.name.replaceAll(" ","_");
                         myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile);
-                        console.log("EditviewViewController myItem.src: ", myItem.src);
+                        //console.log("EditviewViewController myItem.src: ", myItem.src);
                         delete myItem.imgFile; // remove the file from the item, so that it is not stored in the IndexDB database. Deletes the imgFile property to avoid saving the actual file into IndexedDB.
+
+                        myItem.img_storage_location= "localFileSystem"; // set the storage location of the image to local, so that it can be handled differently in the view
+
+                        console.log("EditviewViewController myItem: ", myItem);
                     }
 
                     this.updateOrCreateItem(myItem); // update or create the item in the local file system
@@ -249,14 +264,18 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
 
     updateOrCreateItem(item) {
         if (item.created) {
-            item.update().then(() => {
-
-            });
+            console.log("EditviewViewController updateOrCreateItem item: ", item);
+            item.update().then(() => {});
+            //item.update;  # use update(), the img can not be displayed normally again.
         }
         else {
-            item.create().then(() => {
-
-            });
+            // create() method defined on an entity object, which is part of a custom entity management framework (likely for client-side persistence, maybe using IndexedDB or a custom JS-based ORM).
+            // This method creates an entity instance and persists it (e.g., to local storage or a backend) using em.create(...), while also handling inverse (bidirectional) relationships.
+            // 1) Checks for inverse relationships (via prepareInverseOperations()). 2) Calls the entity manager em.create() to persist the entity. 3) Handles any necessary inverse updates (handleInverseOperations()).  4) Supports both: Callback-style and Promise-style (i.e., await entity.create() is valid)
+            // myItem.create().then(() => {
+            //     alert("created and save in a remote server!");
+            // });
+            item.create().then(() => {});
         }
     }
 

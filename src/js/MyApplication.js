@@ -10,6 +10,7 @@ import * as entities from "./model/MyEntities.js";
 class MyApplication extends mwf.Application {
 
     constructor() {
+
         super();
     }
 

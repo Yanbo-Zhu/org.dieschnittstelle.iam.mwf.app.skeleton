@@ -60,6 +60,7 @@ mwf-view-initial is the sign where the application starts. It is the first view 
                 <div class="mwf-left-align mwf-li-titleblock">
                     <h2>{{title}} {{_id}}</h2>
                     <h3>{{addedDateString}}</h3>
+                    <h3>{{img_storage_location}}</h3>
                 </div>
                 <!--  mwf-listitem-menu-control  call the dialog which is given in data-mwf-listitem-menu="myapp-mediaItemMenu"-->
                 <button class="mwf-imgbutton mwf-img-options-vertical mwf-right-align mwf-listitem-menu-control"></button>
@@ -67,7 +68,9 @@ mwf-view-initial is the sign where the application starts. It is the first view 
         </ul>
     </main>
     <footer>
+        <span class="mwf-left-align" id="datenScope"></span>
         <button class="mwf-imgbutton mwf-img-refresh mwf-right-align"></button>
+        <button class="mwf-imgbutton mwf-img-tiles mwf-right-align"></button>
     </footer>
 </div>
 
@@ -138,7 +141,8 @@ mwf-view-initial is the sign where the application starts. It is the first view 
             </fieldset>
 
             <label class="remote-upload-label">
-                <span>remote&nbsp;upload ({{#if itemToBeEdited.created}}disable{{else}}enabled{{/if}})</span>
+<!--                <span>remote&nbsp;upload ({{#if itemToBeEdited.created}}disable{{else}}enabled{{/if}})</span>-->
+                <span>remote&nbsp;upload</span>
                 <input type="checkbox" checked="{{itemToBeEdited.remote}}" disabled="{{#if itemToBeEdited.created}}disabled{{/if}}"/>
             </label>
 
