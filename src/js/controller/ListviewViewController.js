@@ -8,6 +8,8 @@ import {GenericCRUDImplLocal} from "vfh-iam-mwf-base";
 import {createId} from "vfh-iam-mwf-base/src/js/mwf/crud/mwfEntityManager";
 import {LocalFileSystemReferenceHandler} from "../model/LocalFileSystemReferenceHandler";
 
+let dataSourceScope_test = "localAndRemote"; // "local" or "remote" or "localAndRemote"
+
 
 export default class ListviewViewController extends mwf.ViewController {
 
@@ -83,7 +85,7 @@ export default class ListviewViewController extends mwf.ViewController {
 
                     // submitEditForm is the name which defined in app.html
                     // newItem.title is alway same to the input value you input in form in the input "title"
-                    submitEditForm: async (evt) => {
+                    submitEditForm:  (evt) => {
                         console.log("evt", evt);
 
                         // In many UI frameworks or libraries (like MontiWUi, Meteor, or some custom frameworks), the evt parameter is not the raw browser event. Instead, it's a wrapped or custom event object provided by the framework.
@@ -100,7 +102,8 @@ export default class ListviewViewController extends mwf.ViewController {
                         // delete newItem.imgFile;
                         //
                         // // TODO: addtoListview() do not contains the resolveLocalFileSystemReference() method, so the src is not an object url. The img src is still  a local file system reference, (e.g. opfs://myapp_data/myfile.jpg) und can not be displayed in the Listview properly
-                        // newItem.create().then(() => this.addToListview(newItem));
+                        console.log("ListviewViewController.oncreate(): newItem=", newItem);
+                        newItem.create().then(() => this.addToListview(newItem));
 
 
                         // newItem.create().then(() => {
@@ -114,7 +117,8 @@ export default class ListviewViewController extends mwf.ViewController {
                 }
             })
 
-            //this.initialiseListItemsInListView(this.dataSourceScope)
+            // this.initialiseListItemsInListView(this.dataSourceScope)
+
 
             //this.addToListview(newItem);
         }
@@ -129,15 +133,15 @@ export default class ListviewViewController extends mwf.ViewController {
         const refreshButton = this.root.querySelector("footer .mwf-img-refresh")
         refreshButton.onclick = () => {
             //console.log("ListviewViewController.oncreate(): refresh button clicked. this.dataSourceScope): ", this.dataSourceScope);
-            this.initialiseListItemsInListView(this.dataSourceScope);
+            this.initialiseListItemsInListView(dataSourceScope_test);
         }
 
 
 
 
         // read all items with typename "MediaItem" from the IndexedDB database
-        this.root.querySelector("footer #datenScope").innerHTML = `Data Source: ${this.dataSourceScope}`
-        this.initialiseListItemsInListView(this.dataSourceScope)
+        this.root.querySelector("footer #datenScope").innerHTML = `Data Source: ${dataSourceScope_test}`
+        this.initialiseListItemsInListView(dataSourceScope_test)
         // entities.MediaItem.readAll().then(
         //     async allitems => {
         //         //console.log("ListviewViewController.oncreate(): allitems=", allitems);
@@ -187,7 +191,7 @@ export default class ListviewViewController extends mwf.ViewController {
 
     }
 
-    // onpause(): called when the view is paused, e.g. when the user navigates to another view or closes the app
+    // onpause(): called when the view is paused. This function can be called before switching to another view, or when the app is closed.
     async onpause() {
         console.log("ListviewViewController.onpause() has been called");
 
@@ -205,7 +209,7 @@ export default class ListviewViewController extends mwf.ViewController {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
 
         console.log("ListviewViewController onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
-        //this.initialiseListItemsInListView(this.dataSourceScope);
+        this.initialiseListItemsInListView(dataSourceScope_test);
 
     }
 
@@ -268,20 +272,20 @@ export default class ListviewViewController extends mwf.ViewController {
         const switchElement = this.root.querySelector("footer .mwf-img-tiles")
         const datenScope =  this.root.querySelector("footer #datenScope")
         switchElement.onclick = () => {
-            if (this.dataSourceScope == "localAndRemote") {
-                this.dataSourceScope = "local";
-            } else if (this.dataSourceScope == "local") {
-                this.dataSourceScope = "remote";
-            } else if (this.dataSourceScope == "remote") {
-                this.dataSourceScope = "localAndRemote";
+            if (dataSourceScope_test == "localAndRemote") {
+                dataSourceScope_test = "local";
+            } else if (dataSourceScope_test == "local") {
+                dataSourceScope_test = "remote";
+            } else if (dataSourceScope_test == "remote") {
+                dataSourceScope_test = "localAndRemote";
             } else {
-                this.dataSourceScope = "localAndRemote"; // default case
+                dataSourceScope_test = "localAndRemote"; // default case
             }
 
-            datenScope.innerHTML = `Data Source: ${this.dataSourceScope}`;
+            datenScope.innerHTML = `Data Source: ${dataSourceScope_test}`;
 
-            console.log("ListviewViewController.prepareDataSourceScopeSwitch(): dataSourceScope=", this.dataSourceScope);
-            this.initialiseListItemsInListView(this.dataSourceScope);
+            console.log("ListviewViewController.prepareDataSourceScopeSwitch(): dataSourceScope=", dataSourceScope_test);
+            this.initialiseListItemsInListView(dataSourceScope_test);
 
         }
     }

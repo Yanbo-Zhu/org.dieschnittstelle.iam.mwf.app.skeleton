@@ -192,6 +192,7 @@ export default class FRMDemoViewController extends mwf.ViewController {
                     //     console.log("imgMetadata: ", imgMetadata);
                     // });
 
+                    console.log("FRMDemoViewController.onresume(): imgFile: ", imgFile);
                     // read the EXIF metadata from the image file
                     const imgMetadata = await ExifReader.load(imgFile);
                     console.log("imgMetadata:" + imgMetadata);

@@ -149,7 +149,8 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
                         // imgFile is a File or Blob object — a binary file representation (e.g., from a file input element). These types: 1) Are large in memory. 2) Can't be stored easily in systems like IndexedDB, localStorage, or most JSON-based databases. 3) Are no longer needed once the file has been uploaded and stored remotely on the server or on local file system.
                         // After Upload: 1) The image file is saved on the server (e.g., http://localhost:7077/...). 2) Its remote path is now saved in myItem.src. 3) So the original file (imgFile) is no longer needed
                         // Removing it ensures that: 1) You don’t store unnecessary binary data locally. 2) The object is cleaner and lighter for saving in IndexedDB or any client-side DB. 3) You avoid issues with serializing non-JSON-safe values
-                        delete myItem.imgFile;
+                        // please comment the following line, otherwise the the coordinates of this image will not be resolved in mapp view
+                        //delete myItem.imgFile;
 
                         // Update image source to remote file
                         myItem.src = "http://localhost:7077/" + responseData.data.imgdata;
@@ -188,7 +189,10 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
                         // it returns a url in local file system: fsPrefix + filename; e.g. opfs://myapp_data/myfile.jpg. filename = myItem.imgFile.name.replaceAll(" ","_");
                         myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile);
                         //console.log("EditviewViewController myItem.src: ", myItem.src);
-                        delete myItem.imgFile; // remove the file from the item, so that it is not stored in the IndexDB database. Deletes the imgFile property to avoid saving the actual file into IndexedDB.
+
+                        // remove the file from the item, so that it is not stored in the IndexDB database. Deletes the imgFile property to avoid saving the actual file into IndexedDB.
+                        // please comment the following line, otherwise the the coordinates of this image will not be resolved in mapp view
+                        //delete myItem.imgFile;
 
                         myItem.img_storage_location= "localFileSystem"; // set the storage location of the image to local, so that it can be handled differently in the view
 
@@ -213,7 +217,7 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
 
                     const imgFile = evt.original.target.files[0];
 
-                    console.log("imgFile: ", imgFile);
+                    console.log("FRMDemoViewController.onresume(): imgFile: ", imgFile);
 
                     // const fileReader = new FileReader();
                     // fileReader.readAsDataURL(evt.original.target.files[0]);
@@ -242,6 +246,7 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
 
                     // imgFile is the file that was selected in the file input field, imgFile is a File object, not a string, not a URL.
                     myItem.imgFile = imgFile;
+                    console.log("EditviewViewController myItem.imgFile: ", myItem.imgFile);
 
                     // const localReference = await fsHandler.createLocalFileSystemReference(imgFile);
                     // console.log("localReference: ", localReference);
@@ -275,7 +280,7 @@ export default class EditDialogViewControllerNew extends GenericDialogTemplateVi
             // myItem.create().then(() => {
             //     alert("created and save in a remote server!");
             // });
-            item.create().then(() => {});
+            //item.create().then(() => {});
         }
     }
 

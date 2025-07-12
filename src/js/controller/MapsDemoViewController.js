@@ -23,11 +23,12 @@ export default class MapsDemoViewController extends mwf.ViewController {
         console.log("MapsDemoViewController::oncreate()");
 
         // call the superclass once creation is done
-        super.oncreate();
+        await super.oncreate();
     }
 
 
     async onresume() {
+
         await super.onresume();
 
         //alert("MapsDemoViewController::onresume()");
@@ -44,10 +45,140 @@ export default class MapsDemoViewController extends mwf.ViewController {
             }
         }
 
+        this.initialiseItemsInMapView();
+
+    }
+
+    // onpause(): called when the view is paused. This function can be called before switching to another view, or when the app is closed.
+    async onpause() {
+        //alert("MapsDemoViewController::onpause()");
+
+        await super.onpause();
+    }
+
+    constructor() {
+        super();
+        console.log("MapsDemoViewController()");
+    }
+
+    /*
+     * for views that initiate transitions to other views
+     * NOTE: return false if the view shall not be returned to, e.g. because we immediately want to display its previous view. Otherwise, do not return anything.
+     */
+    async onReturnFromNextView(nextviewid, returnValue, returnStatus) {
+        // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
+        console.log("MapsDemoViewController, onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
+
+        if (returnStatus === "itemDeleted") {
+            this.initialiseItemsInMapView()
+        }
+
+    }
+
+    async initialiseItemsInMapView() {
+
         const allitems = await entities.MediaItem.readAll();
 
         let allItemsWithCoordinate = [];
         let allCoordinates = [];
+        //const coordMap = new Map();
+
+        for (let i = 0; i < allitems.length; i++) {
+
+            const currentMediaItem = allitems[i];
+            console.log("MapsDemoViewController currentMediaItem.imgFile: ", currentMediaItem.imgFile);
+
+            // Check if the currentMediaItem has a latlng property
+            const imgMetadata = await ExifReader.load(currentMediaItem.imgFile, {expanded: true});
+            console.log("MapsDemoViewController imgMetadata: " + imgMetadata);
+
+            if (imgMetadata.gps) {
+                const {latitude, longitude} = imgMetadata.gps;
+                console.log("GPS Latitude:", latitude);
+                console.log("GPS Longitude:", longitude);
+                currentMediaItem.latlng = { latitude, longitude };
+            } else {
+                console.log("No GPS data found in EXIF of imgFile.");
+                const latitude =52.54471159402152;
+                const longitude = 13.352894327349361;
+
+                //const Latitude = 52.45 + Math.random() * 0.10; // 52.45 ~ 52.55
+                //const Longitude = 13.35 + Math.random() * 0.10; // 13.35 ~ 13.45
+
+                currentMediaItem.latlng = { latitude, longitude };
+            }
+
+            console.log("MapsDemoViewController currentMediaItem.latlng: ", currentMediaItem.latlng);
+
+            // const key = `${currentMediaItem.latlng.latitude.toFixed(6)},${currentMediaItem.latlng.longitude.toFixed(6)}`;
+            // if (!coordMap.has(key)) {
+            //     coordMap.set(key, []);
+            // }
+            // coordMap.get(key).push(currentMediaItem);
+
+            // Check if the coordinate already exists in allCoordinates. always display the first item in the items group which has approximate coordinate
+            const currentCoord = [currentMediaItem.latlng.latitude, currentMediaItem.latlng.longitude];
+            const alreadyExists = allCoordinates.some(coord =>
+                Math.abs(coord[0] - currentCoord[0]) < 1e-6 &&
+                Math.abs(coord[1] - currentCoord[1]) < 1e-6
+            );
+
+            if (!alreadyExists) {
+                allItemsWithCoordinate.push(currentMediaItem);
+                allCoordinates.push(currentCoord);
+            }
+
+
+        }
+
+
+        // Now we have a Map with coordinates as keys and arrays of items at those coordinates as values
+        // We can randomly select one item from each coordinate group
+        // for (const [key, itemsAtCoord] of coordMap.entries()) {
+        //     const randomIndex = Math.floor(Math.random() * itemsAtCoord.length);
+        //     const selectedItem = itemsAtCoord[randomIndex];
+        //     allItemsWithCoordinate.push(selectedItem);
+        //
+        //     const [latStr, lngStr] = key.split(",");
+        //     allCoordinates.push([parseFloat(latStr), parseFloat(lngStr)]);
+        // }
+
+
+        console.log("allItemsWithCoordinate: ", allItemsWithCoordinate);
+        console.log("allCoordinates: ", allCoordinates);
+
+        allItemsWithCoordinate.forEach(item => {
+            console.log("MapsDemoViewController allItemsWithCoordinate item: ", item);
+
+            const marker = L.marker([item.latlng.latitude, item.latlng.longitude])
+            marker.addTo(mapController);
+
+            const markerPopup = document.createElement("div");
+            markerPopup.classList.add("myapp-marker-popup");
+            //markerPopup.textContent = item.title;
+
+            const popupTitle = document.createElement("div");
+            markerPopup.appendChild(popupTitle);
+
+            popupTitle.textContent = item.title;
+
+            //const popupImg = document.createElement("img");
+            //markerPopup.appendChild(popupImg);
+            //popupImg.src = item.src;
+
+            marker.bindPopup(markerPopup);
+
+            markerPopup.onclick = () => {
+                //alert("Marker clicked: " + item.title);
+                console.log("MapsDemoViewController markerPopup clicked: item  ", item);
+                const itemobj = item; // set the item to be used in the next view
+                this.nextView("myapp-readview", {itemobj})
+            }
+
+        })
+
+        mapController.fitBounds(allCoordinates);
+
 
         // entities.MediaItem.readAll().then(
         //       allitems => {
@@ -83,70 +214,6 @@ export default class MapsDemoViewController extends mwf.ViewController {
         //
         //     }
         // );
-
-
-        for (let i = 0; i < allitems.length; i++) {
-            const currentMediaItem = allitems[i];
-            console.log("currentMediaItem: ", currentMediaItem);
-
-            const imgMetadata = await ExifReader.load(currentMediaItem);
-            console.log("imgMetadata: " + imgMetadata);
-
-            if (!currentMediaItem.latlng) {
-                const lat = 52.45 + Math.random() * 0.10; // 52.45 ~ 52.55
-                const lng = 13.35 + Math.random() * 0.10; // 13.35 ~ 13.45
-
-                currentMediaItem.latlng = { lat, lng };
-            }
-
-            const currentCoord = [currentMediaItem.latlng.lat, currentMediaItem.latlng.lng];
-
-            // Check if the coordinate already exists in allCoordinates
-            const alreadyExists = allCoordinates.some(coord =>
-                Math.abs(coord[0] - currentCoord[0]) < 1e-6 &&
-                Math.abs(coord[1] - currentCoord[1]) < 1e-6
-            );
-
-            if (!alreadyExists) {
-                allItemsWithCoordinate.push(currentMediaItem);
-                allCoordinates.push(currentCoord);
-            }
-        }
-
-        console.log("allItemsWithCoordinate: ", allItemsWithCoordinate);
-        console.log("allCoordinates: ", allCoordinates);
-
-
-        allItemsWithCoordinate.forEach(item => {
-            console.log("MapsDemoViewController allItemsWithCoordinate item: ", item);
-
-            const marker = L.marker([item.latlng.lat, item.latlng.lng])
-            marker.addTo(mapController);
-
-            const markerPopup = document.createElement("div");
-            markerPopup.classList.add("myapp-marker-popup");
-            //markerPopup.textContent = item.title;
-
-            const popupTitle = document.createElement("div");
-            markerPopup.appendChild(popupTitle);
-
-            popupTitle.textContent = item.title + " " + item._id;
-
-            //const popupImg = document.createElement("img");
-            //markerPopup.appendChild(popupImg);
-            //popupImg.src = item.src;
-
-            marker.bindPopup(markerPopup);
-
-            markerPopup.onclick = () => {
-                //alert("Marker clicked: " + item.title);
-                console.log("MapsDemoViewController markerPopup clicked: item  ", item);
-                this.nextView("myapp-readview", item)
-            }
-
-        })
-
-        mapController.fitBounds(allCoordinates);
 
 
 
@@ -205,28 +272,8 @@ export default class MapsDemoViewController extends mwf.ViewController {
         // console.log("MapsDemoViewController coords: ", coords);
         // mapController.fitBounds(coords);
 
-
     }
 
-    // onpause(): called when the view is paused, e.g. when the user navigates to another view or closes the app
-    async onpause() {
-        //alert("MapsDemoViewController::onpause()");
-    }
-
-    constructor() {
-        super();
-        console.log("MapsDemoViewController()");
-    }
-
-    /*
-     * for views that initiate transitions to other views
-     * NOTE: return false if the view shall not be returned to, e.g. because we immediately want to display its previous view. Otherwise, do not return anything.
-     */
-    async onReturnFromNextView(nextviewid, returnValue, returnStatus) {
-        // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
-        console.log("MapsDemoViewController, onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
-
-    }
 
     /*
      * for views with listviews: bind a list item to an item view
@@ -242,6 +289,7 @@ export default class MapsDemoViewController extends mwf.ViewController {
      */
     onListItemSelected(itemobj, listviewid) {
         // TODO: implement how selection of itemobj shall be handled
+        console.log("MapsDemoViewController onListItemSelected: ", itemobj, listviewid);
     }
 
     /*
@@ -250,6 +298,10 @@ export default class MapsDemoViewController extends mwf.ViewController {
      */
     onListItemMenuItemSelected(menuitemview, itemobj, listview) {
         // TODO: implement how selection of the option menuitemview for itemobj shall be handled
+        console.log("MapsDemoViewController onListItemMenuItemSelected: ", menuitemview, itemobj, listview);
+
+        super.onListItemMenuItemSelected(menuitemview, itemobj, listview);
+
     }
 
     /*

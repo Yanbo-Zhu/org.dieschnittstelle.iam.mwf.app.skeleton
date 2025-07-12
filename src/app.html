@@ -58,7 +58,7 @@ mwf-view-initial is the sign where the application starts. It is the first view 
             <li class="mwf-listitem mwf-li-title-subtitle mwf-template mwf-databind" data-mwf-templatename="myapp-listitem">
                 <img class="mwf-left-align" src="{{src}}"/>
                 <div class="mwf-left-align mwf-li-titleblock">
-                    <h2>{{title}} {{_id}}</h2>
+                    <h2>{{title}}</h2>
                     <h3>{{addedDateString}}</h3>
                     <h3>{{img_storage_location}}</h3>
                 </div>
@@ -81,13 +81,14 @@ mwf-view-initial is the sign where the application starts. It is the first view 
     <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-readview-template">
         <header>
             <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
-            <h1 class="mwf-left-align">{{item.title}} {{item._id}}</h1>
+            <h1 class="mwf-left-align">{{item.title}}</h1>
 
             <!-- on-click="deleteItem" is a function in ReadviewViewController.js. It will be called when the button is clicked. -->
             <button on-click="deleteItem"  class="mwf-imgbutton mwf-img-delete mwf-right-align"></button>
         </header>
 
         <main class="mwf-scrollview">
+            <div>{{#if item.latlng}}Location: ({{item.latlng.latitude}}, {{item.latlng.longitude}}) {{/if}}</div>
             <img src="{{item.src}}" />
         </main>
 
@@ -111,7 +112,8 @@ mwf-view-initial is the sign where the application starts. It is the first view 
         <div id="myapp-maproot">
         </div>
     </main>
-    <footer></footer>
+    <footer>
+    </footer>
 </div>
 
 
@@ -121,7 +123,7 @@ mwf-view-initial is the sign where the application starts. It is the first view 
 <!--id="myapp-editdialog"-->
 <div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog-new"  data-mwf-viewcontroller="EditDialogViewControllerNew">
     <main>
-        <h2>{{#if itemToBeEdited.created}}Medium Aktualisieren: {{itemToBeEdited.title}} with id {{itemToBeEdited._id}} {{else}}Neues Medium{{/if}}</h2>
+        <h2>{{#if itemToBeEdited.created}}Medium Aktualisieren: {{itemToBeEdited.title}} {{else}}Neues Medium{{/if}}</h2>
         <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
         <!--  <form onsubmit="confirm('Submit?') ?  console.log('submit') : event.preventDefault(); " >-->
         <!-- Default behaviour of a form is to submit the form (redirect to a new url address with the input value from form (input value was added into url addresse ) and reload the page.  But we want to prevent this behaviour (page reload), so we use event.preventDefault() -->
@@ -135,7 +137,7 @@ mwf-view-initial is the sign where the application starts. It is the first view 
                 <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" name="title" value="{{itemToBeEdited.title}}" required="required"/>
 <!--                <div id="title-error" style="color: red; display: none;">Titel Eingabe and Bild Auswahl erforderlich</div>-->
 
-                <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-editdialog-form-fileinput" required="required"/>
+                <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-editdialog-form-fileinput" required="{{#unless itemToBeEdited.created}}required{{/unless}}"/>
                 <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera" for="myapp-frm-editdialog-form-fileinput"></label>
 <!--                <div id="file-error" style="color: red; display: none;">Bild: Auswahl erforderlich</div>-->
             </fieldset>
@@ -229,7 +231,7 @@ mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zei
 <div class="mwf-listitem-menu mwf-dialog mwf-popup mwf-template mwf-databind" data-mwf-templatename="myapp-mediaItemMenu">
     <!--            {title: "...", src: "...", add: "..."} .  reactive databinding . the selected item has those attribute originally -->
     <header>
-        <h2 class="mwf-dyncontent">{{title}} {{_id}}</h2>
+        <h2 class="mwf-dyncontent">{{title}}</h2>
     </header>
     <main>
         <ul>
@@ -248,7 +250,7 @@ mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zei
     <main>
         <h2>Medium Löschen</h2>
         <form id="myapp-frm-deletedialog-form" on-submit="submitDeleteForm">
-            <h2>Möchten sie das Medium {{itemToBeEdited.title}} {{itemToBeEdited._id}} löschen?</h2>
+            <h2>Möchten sie das Medium {{itemToBeEdited.title}} löschen?</h2>
             <div class="mwf-buttonbar">
                 <input class="mwf-left-align mwf-button" type="submit" value="Abbrechen" />
                 <button class="mwf-button-prio mwf-right-align mwf-button" type="button" on-click="deleteItem">Löschen</button>

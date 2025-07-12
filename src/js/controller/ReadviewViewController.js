@@ -48,6 +48,10 @@ export default class ReadviewViewController extends mwf.ViewController {
         // deleteItem is named originally in the app.html as "deleteItem"
         templateProxy.bindAction( "deleteItem", () => {
 
+            console.log("ReadviewViewController: templateProxy: ", templateProxy);
+
+            console.log( "ReadviewViewController: deleteItem action called for item: ", myItem);
+
             this.showDialog("mediaItemDeleteDialog", {
                 itemToBeEdited: myItem,
                 actionBindings: {
@@ -57,9 +61,10 @@ export default class ReadviewViewController extends mwf.ViewController {
                     }),
                     deleteItem: ((event) => {
                         myItem.delete().then(() => {
-                            this.hideDialog();
+                            console.log("ReadviewViewController: item deleted: ", myItem);
                             this.previousView({itemToBeEdited: myItem}, "itemDeleted");
                         });
+                        this.hideDialog();
 
                     })
                 }
