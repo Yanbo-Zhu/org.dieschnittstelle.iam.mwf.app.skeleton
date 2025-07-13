@@ -9,7 +9,7 @@ import ExifReader from "exifreader"; // import the exifreader library to read EX
 export let mapController ;
 export let mapView;
 // L : Leaflet library is impoerted in the app.html file
-//let allItemsWithCoordinate_global = [];
+let allItemsWithCoordinate_global = [];
 
 
 export default class MapsDemoViewController extends mwf.ViewController {
@@ -18,12 +18,12 @@ export default class MapsDemoViewController extends mwf.ViewController {
     args;
     root;
     // TODO-REPEATED: declare custom instance attributes for this controller
-    allItemsWithCoordinate_global;
+    //allItemsWithCoordinate_global = [];
 
     constructor() {
         super();
         console.log("MapsDemoViewController()");
-        this.allItemsWithCoordinate_global = []; // global array to store all items with coordinates
+        //this.allItemsWithCoordinate_global = []; // global array to store all items with coordinates
     }
 
     async oncreate() {
@@ -52,7 +52,7 @@ export default class MapsDemoViewController extends mwf.ViewController {
                 this.root.querySelector("#main").appendChild(mapView);
             }
         }
-        this.initialiseItemsInMapView_new();
+        await this.initialiseItemsInMapView_new();
     }
 
     // onpause(): called when the view is paused. This function can be called before switching to another view, or when the app is closed.
@@ -72,13 +72,23 @@ export default class MapsDemoViewController extends mwf.ViewController {
         console.log("MapsDemoViewController, onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
 
         if (returnStatus === "itemDeleted") {
-            this.initialiseItemsInMapView_new()
+            await this.initialiseItemsInMapView_new()
         }
     }
 
     async initialiseItemsInMapView_new() {
 
+        //clear old markers from mapController when initialiseItemsInMapView_new() is called on resume or after deletion. If this is not done, the markers are added again and again, even if the items are already deleted ,so that the map is cluttered with markers
+        mapController.eachLayer((layer) => {
+            if (layer instanceof L.Marker || layer instanceof L.Circle || layer instanceof L.Polyline) {
+                mapController.removeLayer(layer);
+            }
+        });
+
+
+        // read all items from the database. check if they already have a latlng property, if not, generate random coordinates. if the item already exists in the global array allItemsWithCoordinate_global, use the existing item from there. save the items with coordinates in a array allItemsWithCoordinate
         const allitems = await entities.MediaItem.readAll();
+        console.log("MapsDemoViewController initialiseItemsInMapView_new  allitems: ", allitems);
 
         let allItemsWithCoordinate = [];
 
@@ -87,18 +97,19 @@ export default class MapsDemoViewController extends mwf.ViewController {
             const currentMediaItem = allitems[i];
             //console.log("MapsDemoViewController currentMediaItem.imgFile: ", currentMediaItem.imgFile);
             console.log("MapsDemoViewController currentMediaItem: ", currentMediaItem);
-            console.log("MapsDemoViewController currentMediaItem allItemsWithCoordinate_global: ", this.allItemsWithCoordinate_global);
-            //console.log("MapsDemoViewController currentMediaItem checkIfItemExists: ", this.checkIfItemExists(currentMediaItem._id, this.allItemsWithCoordinate_global));
+            console.log("MapsDemoViewController currentMediaItem allItemsWithCoordinate_global: ", allItemsWithCoordinate_global);
+            //console.log("MapsDemoViewController currentMediaItem checkIfItemExists: ", this.checkIfItemExists(currentMediaItem._id, allItemsWithCoordinate_global));
 
-            if (this.checkIfItemExists(currentMediaItem._id, this.allItemsWithCoordinate_global)) {
+            // Check if the currentMediaItem already has a latlng property. If not, generate random coordinates. if the item already exists in the global array allItemsWithCoordinate_global, use the existing item from there,
+            if (this.checkIfItemExists(currentMediaItem._id, allItemsWithCoordinate_global)) {
                 console.log("MapsDemoViewController currentMediaItem already exists in allItemsWithCoordinate_global: ", currentMediaItem._id);
-                allItemsWithCoordinate.push(this.getItemById(currentMediaItem._id, this.allItemsWithCoordinate_global));
+                allItemsWithCoordinate.push(this.getItemById(currentMediaItem._id, allItemsWithCoordinate_global));
             }else {
                 console.log("MapsDemoViewController currentMediaItem does not exist in allItemsWithCoordinate_global: ", currentMediaItem._id);
                 let latlng = this.generateRandomCoordinates(currentMediaItem)
                 currentMediaItem.latlng = latlng;
                 allItemsWithCoordinate.push(currentMediaItem);
-                this.allItemsWithCoordinate_global.push(currentMediaItem);
+                allItemsWithCoordinate_global.push(currentMediaItem);
             }
 
             // const key = `${currentMediaItem.latlng.latitude.toFixed(6)},${currentMediaItem.latlng.longitude.toFixed(6)}`;
@@ -123,16 +134,18 @@ export default class MapsDemoViewController extends mwf.ViewController {
         console.log("allItemsWithCoordinate: ", allItemsWithCoordinate);
 
 
-
+        // Now we have a Map with coordinates as keys and arrays of items at those coordinates as values
         const coordinateMap = this.generateCoordinateMap(allItemsWithCoordinate);
-
         console.log("MapsDemoViewController coordinateMap: ", coordinateMap);
 
+        // select one item from each coordinate group
         const { selectedItems, selectedCoordinats } = this.selectItemsFormCoordinatMap(coordinateMap);
-
         console.log("selectedItems: ", selectedItems);
         console.log("selectedCoordinats: ", selectedCoordinats);
 
+
+
+        // add markers to the map for each selected item
         selectedItems.forEach(item => {
             console.log("MapsDemoViewController allItemsWithCoordinate item: ", item);
 
@@ -163,6 +176,7 @@ export default class MapsDemoViewController extends mwf.ViewController {
 
         })
 
+        // fit the map to the bounds of the selected coordinates
         mapController.fitBounds(selectedCoordinats);
 
 
@@ -172,23 +186,44 @@ export default class MapsDemoViewController extends mwf.ViewController {
     // Check if the item with the given ID exists in the global items array
     // If the item is found, return true; otherwise, return false
     checkIfItemExists(itemId, itemsArray) {
+        console.log("MapsDemoViewController checkIfItemExists: itemId: ", itemId, " itemsArray: ", itemsArray, "itemsArray.length: ", itemsArray.length);
+
         // if itemsArray is empty, return false
         if (!itemsArray || itemsArray.length === 0) {
             return false;
-        } else {
-            // Check if the item with the given ID exists in the itemsArray
-            console.log("MapsDemoViewController checkIfItemExists: itemId: ", itemId, " itemsArray: ", itemsArray);
-
-            const result = itemsArray.some(item => {
-                console.log("MapsDemoViewController checkIfItemExists: item._id: ", item._id, " itemId: ", itemId);
-                return item._id == itemId;
-
-            });
-            console.log("MapsDemoViewController checkIfItemExists result: ", result);
-
-            return result;
         }
+
+        for (let i = 0; i < itemsArray.length; i++) {
+            const item = itemsArray[i];
+            console.log("MapsDemoViewController checkIfItemExists: item._id: ", item._id, " itemId: ", itemId);
+
+            if (item._id == itemId) {
+                console.log("MapsDemoViewController checkIfItemExists result: true");
+                return true;
+            }
+        }
+
+        console.log("MapsDemoViewController checkIfItemExists result: false");
+        return false;
     }
+    // checkIfItemExists(itemId, itemsArray) {
+    //     // if itemsArray is empty, return false
+    //     if (!itemsArray || itemsArray.length === 0) {
+    //         return false;
+    //     } else {
+    //         // Check if the item with the given ID exists in the itemsArray
+    //         console.log("MapsDemoViewController checkIfItemExists: itemId: ", itemId, " itemsArray: ", itemsArray);
+    //
+    //         const result = itemsArray.some(item => {
+    //             console.log("MapsDemoViewController checkIfItemExists: item._id: ", item._id, " itemId: ", itemId);
+    //             return item._id == itemId;
+    //
+    //         });
+    //         console.log("MapsDemoViewController checkIfItemExists result: ", result);
+    //
+    //         return result;
+    //     }
+    // }
 
     // Find the item with the given ID in the global items array
     // If the item is not found, return undefined
@@ -199,7 +234,7 @@ export default class MapsDemoViewController extends mwf.ViewController {
     generateRandomCoordinates(item) {
 
         // read EXIF GPS daten from the image file of the item
-        const imgMetadata = ExifReader.load(item.imgFile, {expanded: true});
+        const imgMetadata =  ExifReader.load(item.imgFile, {expanded: true});
         console.log("MapsDemoViewController imgMetadata: " + imgMetadata);
 
         let latitude, longitude;
@@ -233,7 +268,7 @@ export default class MapsDemoViewController extends mwf.ViewController {
         let coordMap = new Map();
 
         itemArray.forEach(item => {
-            const key = `${item.latlng.latitude.toFixed(6)},${item.latlng.longitude.toFixed(6)}`;
+            const key = `${item.latlng.latitude.toFixed(6)}, ${item.latlng.longitude.toFixed(6)}`;
             if (!coordMap.has(key)) {
                 coordMap.set(key, []);
             }

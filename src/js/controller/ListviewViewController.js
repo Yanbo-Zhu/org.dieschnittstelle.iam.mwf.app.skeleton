@@ -209,7 +209,7 @@ export default class ListviewViewController extends mwf.ViewController {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
 
         console.log("ListviewViewController onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
-        this.initialiseListItemsInListView(dataSourceScope);
+        await this.initialiseListItemsInListView(dataSourceScope);
 
     }
 
@@ -310,12 +310,20 @@ export default class ListviewViewController extends mwf.ViewController {
                 for(let i = 0; i < allitems.length; i++) {
                     const currentMediaItem = allitems[i];
                     console.log("currentMediaItem: ", currentMediaItem);
+                    console.log("currentMediaItem.src before: ", currentMediaItem.src);
 
-                    if (currentMediaItem.src) {
+                    // if (currentMediaItem.src.startsWith("blob:http://localhost:8080")){
+                    //     URL.revokeObjectURL(currentMediaItem.src);
+                    // }
+                    //
+                    // console.log("currentMediaItem.src mittel: ", currentMediaItem.src);
+
+                    if (currentMediaItem.src.startsWith("opfs://")) {
                         // if the src is a local file system reference, resolve it to an object url
                         // in plus button in ListviewViewController.js: newItem.src = :https://picsum.photos/300/300"
                         // in FRMDemoViewControl.js: myItem.src = await fsHandler.createLocalFileSystemReference(myItem.imgFile); it returns a url in local file system: fsPrefix + filename; e.g. opfs://myapp_data/myfile.jpg. filename = myItem.imgFile.name.replaceAll(" ","_");
                         currentMediaItem.src = await fsHandler.resolveLocalFileSystemReference(currentMediaItem.src);
+                        console.log("currentMediaItem.src after: ", currentMediaItem.src);
                     }
 
                     const isRemote = !!currentMediaItem.remote;

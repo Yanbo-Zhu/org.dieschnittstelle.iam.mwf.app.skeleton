@@ -110,10 +110,7 @@ export default class ReadviewViewController extends mwf.ViewController {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
 
         console.log("ReadviewViewController, onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
-        // if we return from a view that deleted an item, we remove it from the listview
-        if (returnStatus === "itemDeleted" && returnValue) {
-            this.removeFromListview(returnValue.item._id);
-        }
+
     }
 
     /*
