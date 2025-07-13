@@ -142,11 +142,13 @@ mwf-view-initial is the sign where the application starts. It is the first view 
 <!--                <div id="file-error" style="color: red; display: none;">Bild: Auswahl erforderlich</div>-->
             </fieldset>
 
-            <label class="remote-upload-label">
+
+            <label class="remote-upload-label" style="{{#if itemToBeEdited.created}}display: none{{/if}}">
 <!--                <span>remote&nbsp;upload ({{#if itemToBeEdited.created}}disable{{else}}enabled{{/if}})</span>-->
                 <span>remote&nbsp;upload</span>
                 <input type="checkbox" checked="{{itemToBeEdited.remote}}" disabled="{{#if itemToBeEdited.created}}disabled{{/if}}"/>
             </label>
+
 
             <div class="image-container">
                 <img src="{{itemToBeEdited.src}}"/>

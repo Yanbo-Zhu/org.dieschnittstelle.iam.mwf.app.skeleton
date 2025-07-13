@@ -8,7 +8,8 @@ import {GenericCRUDImplLocal} from "vfh-iam-mwf-base";
 import {createId} from "vfh-iam-mwf-base/src/js/mwf/crud/mwfEntityManager";
 import {LocalFileSystemReferenceHandler} from "../model/LocalFileSystemReferenceHandler";
 
-let dataSourceScope_test = "localAndRemote"; // "local" or "remote" or "localAndRemote"
+let dataSourceScope = "localAndRemote"; // "local" or "remote" or "localAndRemote"
+
 
 
 export default class ListviewViewController extends mwf.ViewController {
@@ -18,7 +19,6 @@ export default class ListviewViewController extends mwf.ViewController {
     root; // the root element of the view, where the view is attached. where this class instanziated
     // TODO-REPEATED: declare custom instance attributes for this controller
     items;
-    dataSourceScope;
 
     // fsHandler = await LocalFileSystemReferenceHandler.getInstance();
     //
@@ -29,7 +29,7 @@ export default class ListviewViewController extends mwf.ViewController {
 
         super();
         this.crudops = GenericCRUDImplLocal.newInstance("MediaItem");
-        this.dataSourceScope = "localAndRemote"; // "local" or "remote" or "localAndRemote"
+       
 
 
 
@@ -133,15 +133,15 @@ export default class ListviewViewController extends mwf.ViewController {
         const refreshButton = this.root.querySelector("footer .mwf-img-refresh")
         refreshButton.onclick = () => {
             //console.log("ListviewViewController.oncreate(): refresh button clicked. this.dataSourceScope): ", this.dataSourceScope);
-            this.initialiseListItemsInListView(dataSourceScope_test);
+            this.initialiseListItemsInListView(dataSourceScope);
         }
 
 
 
 
         // read all items with typename "MediaItem" from the IndexedDB database
-        this.root.querySelector("footer #datenScope").innerHTML = `Data Source: ${dataSourceScope_test}`
-        this.initialiseListItemsInListView(dataSourceScope_test)
+        this.root.querySelector("footer #datenScope").innerHTML = `Data Source: ${dataSourceScope}`
+        this.initialiseListItemsInListView(dataSourceScope)
         // entities.MediaItem.readAll().then(
         //     async allitems => {
         //         //console.log("ListviewViewController.oncreate(): allitems=", allitems);
@@ -178,7 +178,7 @@ export default class ListviewViewController extends mwf.ViewController {
     /*
     * Resume the view after it has been resumed. onresume() Aufgerufen wenn ein Controller wieder angezeigt wird, nachdem er vorher schon einmal angezeigt wurde.
     * onresume() wird aufgerufen, wenn User den Ansicht schon gesehen hat,
-    * onresume() wird aufgerufen, wenn Ansicht wechseln, aber nicht neu laden will, also wenn die View schon einmal angezeigt wurde.
+    * onresume() wird aufgerufen, wenn von anderen View zu dem View wechseln, beispielsweise, von ReadviewViewController zu ListviewViewController.
      */
     async onresume() {
 
@@ -209,7 +209,7 @@ export default class ListviewViewController extends mwf.ViewController {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
 
         console.log("ListviewViewController onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
-        this.initialiseListItemsInListView(dataSourceScope_test);
+        this.initialiseListItemsInListView(dataSourceScope);
 
     }
 
@@ -272,20 +272,20 @@ export default class ListviewViewController extends mwf.ViewController {
         const switchElement = this.root.querySelector("footer .mwf-img-tiles")
         const datenScope =  this.root.querySelector("footer #datenScope")
         switchElement.onclick = () => {
-            if (dataSourceScope_test == "localAndRemote") {
-                dataSourceScope_test = "local";
-            } else if (dataSourceScope_test == "local") {
-                dataSourceScope_test = "remote";
-            } else if (dataSourceScope_test == "remote") {
-                dataSourceScope_test = "localAndRemote";
+            if (dataSourceScope == "localAndRemote") {
+                dataSourceScope = "local";
+            } else if (dataSourceScope == "local") {
+                dataSourceScope = "remote";
+            } else if (dataSourceScope == "remote") {
+                dataSourceScope = "localAndRemote";
             } else {
-                dataSourceScope_test = "localAndRemote"; // default case
+                dataSourceScope = "localAndRemote"; // default case
             }
 
-            datenScope.innerHTML = `Data Source: ${dataSourceScope_test}`;
+            datenScope.innerHTML = `Display mode: ${dataSourceScope} items`;
 
-            console.log("ListviewViewController.prepareDataSourceScopeSwitch(): dataSourceScope=", dataSourceScope_test);
-            this.initialiseListItemsInListView(dataSourceScope_test);
+            console.log("ListviewViewController.prepareDataSourceScopeSwitch(): dataSourceScope=", dataSourceScope);
+            this.initialiseListItemsInListView(dataSourceScope);
 
         }
     }
