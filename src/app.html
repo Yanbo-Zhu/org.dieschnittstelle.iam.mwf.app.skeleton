@@ -136,7 +136,6 @@ mwf-view-initial is the sign where the application starts. It is the first view 
                 <!--  {itemToBeEdited: {title: "...", src: "..."}} placeholder="Titel"   required="required" -->
                 <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" name="title" value="{{itemToBeEdited.title}}" required="required"/>
 <!--                <div id="title-error" style="color: red; display: none;">Titel Eingabe and Bild Auswahl erforderlich</div>-->
-
                 <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-editdialog-form-fileinput" required="{{#unless itemToBeEdited.created}}required{{/unless}}"/>
                 <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera" for="myapp-frm-editdialog-form-fileinput"></label>
 <!--                <div id="file-error" style="color: red; display: none;">Bild: Auswahl erforderlich</div>-->

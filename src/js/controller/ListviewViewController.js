@@ -209,7 +209,11 @@ export default class ListviewViewController extends mwf.ViewController {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
 
         console.log("ListviewViewController onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
-        await this.initialiseListItemsInListView(dataSourceScope);
+        //await this.initialiseListItemsInListView(dataSourceScope);
+
+        if (returnStatus === "itemDeleted") {
+            await this.removeFromListview(returnValue.itemToBeEdited._id)
+        }
 
     }
 
