@@ -23,7 +23,8 @@
           crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
             integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script> -->
+            crossorigin=""></script>
+    -->
 
     <!-- framework + application js resources (also shown as not available, see above) -->
     <script type="module" src="app-js.bundle.min.js"></script>
@@ -53,8 +54,8 @@ mwf-view-initial is the sign where the application starts. It is the first view 
         <!--This template muss not be set within the <ul> element, but it is better to do so, as it is easier to find the template in the code-->
         <ul class="mwf-listview" data-mwf-listitem-view="myapp-listitem" data-mwf-listitem-menu="myapp-mediaItemMenu">
             <!--class="mwf-template": this <li>xx</li> is used as template with a self-defined name "myapp-listitem". this name is given through attribute data-mwf-templatename-->
-<!--            mwf-databind explanatgon at 19:37   in 51.17 min am 2025.05.25-->
-<!--            {title: "...", src: "...", add: "..."} .  reactive databinding . the item has those attribute originally -->
+            <!--            mwf-databind explanatgon at 19:37   in 51.17 min am 2025.05.25-->
+            <!--            {title: "...", src: "...", add: "..."} .  reactive databinding . the item has those attribute originally -->
             <li class="mwf-listitem mwf-li-title-subtitle mwf-template mwf-databind" data-mwf-templatename="myapp-listitem">
                 <img class="mwf-left-align" src="{{src}}"/>
                 <div class="mwf-left-align mwf-li-titleblock">
@@ -77,19 +78,19 @@ mwf-view-initial is the sign where the application starts. It is the first view 
 <!--Read View: Show the Photo ------------------------------------------>
 <!--mwf-view-initial: the first view shows up-->
 <div class="mwf-view" id="myapp-readview" data-mwf-viewcontroller="ReadviewViewController">
-<!--    {item: {title: "...", src: "...", _id: "..." , addedDateString: "..."}}-->
+    <!--    {item: {title: "...", src: "...", _id: "..." , addedDateString: "..."}}-->
     <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-readview-template">
         <header>
             <button class="mwf-imgbutton mwf-img-sandwich mwf-left-align mwf-img-sandwich-action"></button>
             <h1 class="mwf-left-align">{{item.title}}</h1>
 
             <!-- on-click="deleteItem" is a function in ReadviewViewController.js. It will be called when the button is clicked. -->
-            <button on-click="deleteItem"  class="mwf-imgbutton mwf-img-delete mwf-right-align"></button>
+            <button on-click="deleteItem" class="mwf-imgbutton mwf-img-delete mwf-right-align"></button>
         </header>
 
         <main class="mwf-scrollview">
             <div>{{#if item.latlng}}Location: ({{item.latlng.latitude}}, {{item.latlng.longitude}}) {{/if}}</div>
-            <img src="{{item.src}}" />
+            <img src="{{item.src}}"/>
         </main>
 
         <footer>
@@ -121,7 +122,8 @@ mwf-view-initial is the sign where the application starts. It is the first view 
 <!--This windows will pop up after clicking the plus button in the top bar or Edit button in the Action Menu(Edit or Delete Action). Image upload is embedded in this dialog-->
 <!--It can also add those attribute into class : mwf-styling mwf-shown mwf-databind-->
 <!--id="myapp-editdialog"-->
-<div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog-new"  data-mwf-viewcontroller="EditDialogViewControllerNew">
+<div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog-new"
+     data-mwf-viewcontroller="EditDialogViewControllerNew">
     <main>
         <h2>{{#if itemToBeEdited.created}}Medium Aktualisieren: {{itemToBeEdited.title}} {{else}}Neues Medium{{/if}}</h2>
         <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
@@ -134,16 +136,15 @@ mwf-view-initial is the sign where the application starts. It is the first view 
             <fieldset class="mwf-material">
                 <legend>Title</legend>
                 <!--  {itemToBeEdited: {title: "...", src: "..."}} placeholder="Titel"   required="required" -->
-                <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" name="title" value="{{itemToBeEdited.title}}" required="required"/>
-<!--                <div id="title-error" style="color: red; display: none;">Titel Eingabe and Bild Auswahl erforderlich</div>-->
-                <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-editdialog-form-fileinput" required="{{#unless itemToBeEdited.created}}required{{/unless}}"/>
+                <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" name="title" value="{{itemToBeEdited.title}}"
+                       required="required"/>
+                <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-editdialog-form-fileinput"
+                       required="{{#unless itemToBeEdited.created}}required{{/unless}}"/>
                 <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera" for="myapp-frm-editdialog-form-fileinput"></label>
-<!--                <div id="file-error" style="color: red; display: none;">Bild: Auswahl erforderlich</div>-->
             </fieldset>
 
-
             <label class="remote-upload-label" style="{{#if itemToBeEdited.created}}display: none{{/if}}">
-<!--                <span>remote&nbsp;upload ({{#if itemToBeEdited.created}}disable{{else}}enabled{{/if}})</span>-->
+                <!--                <span>remote&nbsp;upload ({{#if itemToBeEdited.created}}disable{{else}}enabled{{/if}})</span>-->
                 <span>remote&nbsp;upload</span>
                 <input type="checkbox" checked="{{itemToBeEdited.remote}}" disabled="{{#if itemToBeEdited.created}}disabled{{/if}}"/>
             </label>
@@ -154,74 +155,19 @@ mwf-view-initial is the sign where the application starts. It is the first view 
             </div>
 
             <div class="mwf-buttonbar">
-                <button type="button" on-click="deleteEditedItem" disabled="{{#if !itemToBeEdited.created}}disabled{{/if}}" class="mwf-button mwf-left-align">Löschen</button>
+                <button type="button" on-click="deleteEditedItem" disabled="{{#if !itemToBeEdited.created}}disabled{{/if}}"
+                        class="mwf-button mwf-left-align">Löschen
+                </button>
 
                 <!--Nachdem Submit button klicken:
                 1. Get request aufgebaut. Browser baut den get request auf und liest the input parameter. Ausgelesenen Input Felder als Bestandteil eines Querry Strings hinten an die URL ran. Das ist dann die neue URL dieser Browser.  Der Browser schickt den Request an den Server, von dem die das html-Dokument geladen wurde, welches das Formular darstellt. -->
                 <!-- du aber ein neues würde zum Server neues Dokument ausgeliefert -->
-                <input class="mwf-button mw-button-prio mwf-right-align" type="submit" value="{{#if itemToBeEdited.created}}AKTUALISIEREN{{else}}Hinzufügen{{/if}}"/>
+                <input class="mwf-button mw-button-prio mwf-right-align" type="submit"
+                       value="{{#if itemToBeEdited.created}}AKTUALISIEREN{{else}}Hinzufügen{{/if}}"/>
             </div>
         </form>
     </main>
 </div>
-
-
-<!--AddNeuItem dialog:----------------------------------------------------->
-<!--This windows will pop up after clicking the plus button in the top bar or Edit button in the Action Dialog(Edit or Delete Action).
-Image upload is not embedded in this dialog-->
-<!--It can also add those attribute into class : mwf-styling mwf-shown-->
-<div class="mwf-dialog mwf-popup mwf-template mwf-databind mwf-view-component" data-mwf-templatename="myapp-mediaitem-dialog"  data-mwf-viewcontroller="EditDialogViewController">
-    <main>
-        <h2>{{#if itemToBeEdited.created}}update: {{itemToBeEdited.title}}. MEDIUM AKTUALISIEREN{{else}}NEUES MEDIUM{{/if}}</h2>
-        <!-- add a action when submit happens: give a event function by onsubmit. Lambda function funtionkiert hier nicht, like () => confirm('submit!') .      event.preventDefault(), e => e.preventDefault();-->
-        <!--  <form onsubmit="confirm('Submit?') ?  console.log('submit') : event.preventDefault(); " >-->
-        <!-- Default behaviour of a form is to submit the form (redirect to a new url address with the input value from form (input value was added into url addresse ) and reload the page.  But we want to prevent this behaviour (page reload), so we use event.preventDefault() -->
-        <!-- <form onsubmit=" confirm('Submit?') ? console.log('submit', event) : event.preventDefault();">-->
-        <!--  on + submit: wenn submit action ausgelost-->
-        <form on-submit="submitEditForm">
-
-            <!--  {itemToBeEdited: {title: "...", src: "..."}}  -->
-            <input on-blur="onTextInputCompleted" class="mwf-autofocus" type="text" placeholder="Titel" name="title" value="{{itemToBeEdited.title}}" required="required"/>
-            <div class="mwf-buttonbar">
-                <button type="button" on-click="deleteEditedItem" disabled="{{#if !itemToBeEdited.created}}disabled{{/if}}" class="mwf-button mwf-left-align">Löschen</button>
-
-                <!--Nachdem Submit button klicken:
-                1. Get request aufgebaut. Browser baut den get request auf und liest the input parameter. Ausgelesenen Input Felder als Bestandteil eines Querry Strings hinten an die URL ran. Das ist dann die neue URL dieser Browser.  Der Browser schickt den Request an den Server, von dem die das html-Dokument geladen wurde, welches das Formular darstellt. -->
-                <!-- du aber ein neues würde zum Server neues Dokument ausgeliefert -->
-                <input class="mwf-button mw-button-prio mwf-right-align" type="submit" value="{{#if itemToBeEdited.created}}AKTUALISIEREN{{else}}Hinzufügen{{/if}}"/>
-            </div>
-
-        </form>
-    </main>
-
-</div>
-
-<!--AddNeuItem dialog ---------------------------------------------------->
-<!--image can be selected and uploaded through this dialog.-->
-<!--class: mwf-view-initial-->
-<div id="myapp-demo-view" class="mwf-view" data-mwf-viewcontroller="FRMDemoViewController" >
-    <div class="mwf-template mwf-databind" data-mwf-templatename="myapp-frm-demo-template">
-        <header>
-            <input class="mwf-imgbutton mwf-img-disk mwf-right-align" type="submit" value="submit" form="myapp-frm-demo-form"/>
-        </header>
-        <main>
-            <form id="myapp-frm-demo-form" on-submit="submitForm">
-                <fieldset class="mwf-material">
-                    <legend>Image</legend>
-                    <input name="imgsrc" type="text" required="required" value="{{item.title}}" />
-                    <!-- <input class="mwf-button mwf-button-prio" type="submit" value="submit"/>-->
-                    <input class="mwf-material-altinput" on-change="fileSelected" type="file" id="myapp-frm-demo-form-fileinput" />
-                    <label class="mwf-material-altinput mwf-imgbutton mwf-img-camera" for="myapp-frm-demo-form-fileinput"></label>
-                </fieldset>
-
-                <input type="checkbox" checked="{{item.remote}}"/>
-                <img src="{{item.src}}"/>
-            </form>
-        </main>
-        <footer class="mwf-imgbutton mwf-img-backward mwf-back mwf-left-align"></footer>
-    </div>
-</div>
-
 
 
 <!-- Action Dialog/Menu: Edit or Delete --------------------------------------------->
@@ -253,7 +199,7 @@ mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zei
         <form id="myapp-frm-deletedialog-form" on-submit="submitDeleteForm">
             <h2>Möchten sie das Medium {{itemToBeEdited.title}} löschen?</h2>
             <div class="mwf-buttonbar">
-                <input class="mwf-left-align mwf-button" type="submit" value="Abbrechen" />
+                <input class="mwf-left-align mwf-button" type="submit" value="Abbrechen"/>
                 <button class="mwf-button-prio mwf-right-align mwf-button" type="button" on-click="deleteItem">Löschen</button>
             </div>
         </form>
@@ -262,7 +208,8 @@ mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zei
 
 <!--Sidebar: For switching views ---------------------------------------------------->
 <!--data-mwf-targetview decide which view can be switched to-->
-<div id="sidemenu" class="mwf-sidemenu mwf-expanded mwf-view-component mwf-attaching mwf-initialise-onload" data-mwf-viewcontroller="SidemenuViewController">
+<div id="sidemenu" class="mwf-sidemenu mwf-expanded mwf-view-component mwf-attaching mwf-initialise-onload"
+     data-mwf-viewcontroller="SidemenuViewController">
     <ul>
         <li class="mwf-li-singletitle mwf-menu-item" data-mwf-id="mainmenu-items" data-mwf-targetview="myapp-listview">
             <div class="mwf-icon mwf-img-photo-album mwf-left-align"></div>
@@ -279,7 +226,6 @@ mwf-popup: Bei Öffnen des Dialogs soll die Listenansicht über einen kurzen Zei
 <!--<div class="mwf-toast">-->
 <!--  lorem ipsum-->
 <!--</div>-->
-
 
 </body>
 

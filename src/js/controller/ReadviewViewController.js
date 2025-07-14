@@ -26,7 +26,6 @@ export default class ReadviewViewController extends mwf.ViewController {
 
         const myItem = this.args.itemobj //new entities.MediaItem("my new item", "https://picsum.photos/200/100");  // this.args.itemobj;
 
-
         /*
          * bindElement(elementid, data, parent)
          * bind a view element to some data - elementid might either be an element or a template - this function will be used by subclasses, e.g. for instantiating forms
@@ -36,16 +35,7 @@ export default class ReadviewViewController extends mwf.ViewController {
         const templateProxy = this.bindElement("myapp-readview-template", {item: myItem, }, this.root).viewProxy;
         console.log("returnValueFromBindElement: ", templateProxy);
 
-        // his.bindElement("myapp-readview-template", {item: myItem, }, this.root) replace the code below
-        // how to use show myItem into the view
-        // const h1 = this.root.querySelector("h1");
-        // h1.textContent = myItem.title + " " + myItem._id ;
-        // const img = this.root.getElementsByTagName("img")[0];
-        // img.src = myItem.src;
-
-        // bind the item to the view
-
-        // deleteItem is named originally in the app.html as "deleteItem"
+        //  The action name deleteItem is named originally in the app.html as "deleteItem"
         templateProxy.bindAction( "deleteItem", () => {
 
             console.log("ReadviewViewController: templateProxy: ", templateProxy);
@@ -70,22 +60,23 @@ export default class ReadviewViewController extends mwf.ViewController {
                 }
             })
 
-            // myItem.delete().then(() => {
-            //     this.previousView({item: myItem}, "itemDeleted");
-            // });
-
-            // const anotherItem = new entities.MediaItem("another item", "https://picsum.photos/200/100");
-            // templateProxy.update({item:anotherItem});
         });
 
-        //     const deleteAction = this.root.querySelector(" header button:last-child");
-        // deleteAction.onclick = () => {
-        //     //alert("delete action");
-        //     myItem.delete().then(() => {
-        //         this.previousView({item: myItem}, "itemDeleted");
-        //     });
-        // }
 
+        // how to add a new  myItem into the view
+        //const anotherItem = new entities.MediaItem("another item", "https://picsum.photos/200/100");
+        //templateProxy.update({item:anotherItem});
+
+        // how to show  myItem into the view
+        // this.bindElement("myapp-readview-template", {item: myItem, }, this.root) replace the code below
+        // const h1 = this.root.querySelector("h1");
+        // h1.textContent = myItem.title + " " + myItem._id ;
+        // const img = this.root.getElementsByTagName("img")[0];
+        // img.src = myItem.src;
+
+
+
+        // how to bind the back button to the previous view
         // this.root.querySelector("footer button").onclick = () => {
         //     this.previousView()
         // }
@@ -98,7 +89,6 @@ export default class ReadviewViewController extends mwf.ViewController {
 
     constructor() {
         super();
-
         console.log("ReadviewViewController(): constructor called");
     }
 
@@ -110,7 +100,6 @@ export default class ReadviewViewController extends mwf.ViewController {
         // TODO: check from which view, and possibly with which status, we are returning, and handle returnValue accordingly
 
         console.log("ReadviewViewController, onReturnFromNextView(): ", nextviewid, returnValue, returnStatus);
-
     }
 
     /*

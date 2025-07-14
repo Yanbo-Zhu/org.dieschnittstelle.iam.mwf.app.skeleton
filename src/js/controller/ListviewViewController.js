@@ -100,10 +100,18 @@ export default class ListviewViewController extends mwf.ViewController {
                         // newItem.src = await fsHandler.createLocalFileSystemReference(newItem.imgFile);
                         // console.log("ListviewViewController  myItem.src: ", newItem.src);
                         // delete newItem.imgFile;
-                        //
-                        // // TODO: addtoListview() do not contains the resolveLocalFileSystemReference() method, so the src is not an object url. The img src is still  a local file system reference, (e.g. opfs://myapp_data/myfile.jpg) und can not be displayed in the Listview properly
+
+
+                        /*
+                        * create() method defined on an entity object, which is part of a custom entity management framework (likely for client-side persistence, maybe using IndexedDB or a custom JS-based ORM).
+                        * This method creates an entity instance and persists it (e.g., to local storage or a backend) using em.create(...), while also handling inverse (bidirectional) relationships.
+                        * 1) Checks for inverse relationships (via prepareInverseOperations()). 2) Calls the entity manager em.create() to persist the entity. 3) Handles any necessary inverse updates (handleInverseOperations()).  4) Supports both: Callback-style and Promise-style (i.e., await entity.create() is valid)
+                         * addtoListview() do not contains the resolveLocalFileSystemReference() method, but the src is  an object url ( e.g. blob:http://localhost:8080/20adc307-585f-4a97-a32c-b57bf42336cd), not a local file system reference, (e.g. opfs://myapp_data/myfile.jpg). It  can be displayed in the Listview properly
+                         */
                         console.log("ListviewViewController.oncreate(): newItem=", newItem);
-                        newItem.create().then(() => this.addToListview(newItem));
+                        newItem.create().then(() =>
+                            this.addToListview(newItem)
+                        );
 
 
                         // newItem.create().then(() => {
@@ -438,8 +446,6 @@ export default class ListviewViewController extends mwf.ViewController {
             }
         });
     }
-
-
 
 
     async hideDialog(fromSubmit) {

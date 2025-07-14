@@ -10,7 +10,6 @@ import * as entities from "./model/MyEntities.js";
 class MyApplication extends mwf.Application {
 
     constructor() {
-
         super();
     }
 
@@ -34,7 +33,6 @@ class MyApplication extends mwf.Application {
 
         // entities.MediaItem ist eine Entity Klasse, die von EntityManager.Entity erbt.
         // Register/Verknüpft the entity type "MediaItem" with the Entity Klasse entities.MediaItem . with that the entity type "MediaItem" is registered with the EntityManager.
-        // Register/Verknüpft die entity type "MediaItem" mit dem Entity Klasse entities.MediaItem
         // true: mit ture wird der Datenschutz ausgeführt. Data type consistenz relalisieren. Klasse entities.MediaItem zu  entity type "MediaItem" in der Datenbank
         this.registerEntity("MediaItem", entities.MediaItem, true);
 

@@ -13,7 +13,6 @@ import * as entities from "./model/MyEntities.js";
 /* application libraries: view controllers */
 // TODO-REPEATED: import any further view controllers here
 import ListviewViewController from "./controller/ListviewViewController.js";
-import MyInitialViewController from "./controller/MyInitialViewController.js";
 import ReadviewViewController from "./controller/ReadviewViewController.js";
 import FRMDemoViewController from "./controller/FRMDemoViewController.js";
 import EditDialogViewController from "./controller/EditDialogViewController.js";
