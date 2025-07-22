@@ -28,6 +28,7 @@ export class MediaItem extends EntityManager.Entity {
     contentType;
     added = Date.now();
     description = "";
+    img_storage_location = "";
 
     constructor(title, src, contentType) {
         super();

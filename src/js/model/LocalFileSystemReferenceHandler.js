@@ -1,3 +1,10 @@
+/*
+
+The term Blob stands for Binary Large Object. In web development, it's used to represent immutable, raw binary data — like files, images, videos, or arbitrary byte data.
+
+In JavaScript (especially in browser environments), Blob is a built-in object that allows you to store and manipulate binary data in a file-like way.
+ */
+
 const fsRoot = "myapp_data";
 const fsPrefix = "opfs://";
 
@@ -29,11 +36,13 @@ export class LocalFileSystemReferenceHandler {
         return instance;
     }
 
-    // takes filedata and creates a (proprietary) url to it
+    // takes filedata and creates a (proprietary) url/local file system reference/url to it
+    // input parameter filedata ( currentMediaItem.src) -> filename  -> create a file handle -> create a fileContentStream based on the file handle -> write the filedata ( currentMediaItem.src)  to the fileContentStream-> return a url (fsPrefix + filename) pointing to the filedata
     async createLocalFileSystemReference(filedata) {
 
         // use the name of the file
         const filename = filedata.name.replaceAll(" ","_");
+
         // get a handle for writing the filedata
         const fileHandle = await this.rootDirectoryHandle.getFileHandle(
             filename,
@@ -41,9 +50,10 @@ export class LocalFileSystemReferenceHandler {
         );
 
         // write the filedata
-        const fileContentStream = await fileHandle.createWritable();
-        await fileContentStream.write(filedata);
-        await fileContentStream.close();
+        // fileContentStream is a writable stream used to write data (such as a file or blob) to the local file system. It’s part of the File System Access API (used in modern browsers), or a similar local storage system in environments like Electron.
+        const fileContentStream = await fileHandle.createWritable(); // This creates a writable stream for the file you want to save.
+        await fileContentStream.write(filedata); // This writes the actual content (filedata, which is probably a Blob or File) into the file.
+        await fileContentStream.close(); // This closes the stream, finalizing the write operation and making sure the data is saved.
 
         console.log("LocalFileSystemReferenceHandler.stored: ", filename);
 
@@ -51,7 +61,10 @@ export class LocalFileSystemReferenceHandler {
         return fsPrefix + filename;
     }
 
-    // resolves a proprietary url to an object url
+    // resolves a proprietary url/ local url in local file system to an object url
+    // converts a local file system reference/url (like opfs://myapp_data/myfile.jpg) to a  Object URL that can be used in the browser.
+    // local file system reference/url -> filename -> retrieve FileData ( in blob format) -> Create ObjectURL through URL.createObjectURL()
+    // When you use URL.createObjectURL(blob), you get a temporary URL like: blob:http://localhost:3000/9fc74be4-6f91-4a5e-b7c1-93c6e13f23ab. You can use this in an <img src="...">, <a href="...">, <video>, etc.
     async resolveLocalFileSystemReference(fileurl) {
         if (!fileurl.startsWith(fsPrefix)) {
             return fileurl;

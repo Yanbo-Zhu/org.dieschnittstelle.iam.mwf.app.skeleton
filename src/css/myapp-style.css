@@ -19,3 +19,45 @@
     /*max-width: 100%; 250px;*/
     max-width: 100%;
 }
+
+
+/*
+ Editdialog styles
+ */
+
+.mwf-img-camera {
+    opacity: 1;
+}
+
+#myapp-frm-editdialog-form .image-container {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*border: 1px solid #ccc;*/
+
+    margin: 1em auto;
+}
+
+#myapp-frm-editdialog-form .image-container img {
+    max-width: 95%;
+    height: 95%;
+    object-fit: contain;
+    display: block;
+    margin: 1em auto;
+}
+
+#myapp-frm-editdialog-form .remote-upload-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 1em;
+    padding-left: 1em; /* or try margin-left */
+    /* or margin-left: 0.5em; */
+}
+
+#myapp-frm-editdialog-form .remote-upload-label span {
+    color: black;
+}
+

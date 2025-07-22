@@ -19,13 +19,14 @@ export default class EditDialogViewController extends GenericDialogTemplateViewC
         console.log("root: ", this.root);
         console.log("args: ", this.args);
 
-        // this.this.viewProxy.bindAction("onTextInputCompleted", (evt) => {
-        //     alert("on Text Input Completed: " + evt.original.target.value);
-        //
-        // });
+        // this.root.viewProxy.bindAction("onTextInputCompleted",
+        //     async (evt) => {
+        //         alert("on Text Input Completed: " + evt.original.target.value);
+        //     }
+        // );
 
         this.root.querySelector("input[type='text']").onblur = (evt) => {
-            alert("on Text Input Completed");
+            //alert("on Text Input Completed");
             this.root.querySelector("h2").textContent = "Modified Title";
         }
     }
@@ -41,8 +42,5 @@ export default class EditDialogViewController extends GenericDialogTemplateViewC
     //     console.log("hideDialog() called");
     //
     // }
-
-
-
 
 }
